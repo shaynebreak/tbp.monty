@@ -38,7 +38,7 @@ if __name__ == "__main__":
     experiments = cmd_args.experiments
 
     if cmd_args.show_sensor_output:
-        config["experiment_args"]["show_sensor_output"] = True
+        cmd_args["experiment_args"]["show_sensor_output"] = True
         print("✅ show-sensor-output detected: adding sensor output visualization.")
 
     if cmd_args.quiet_habitat_logs:
