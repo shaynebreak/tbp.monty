@@ -47,10 +47,12 @@ def create_cmd_parser(experiments: list[str]):
         help="Don't run an experiment; just print out the config for visual inspection",
     )
     parser.add_argument(
+		"-s",
         "--show-sensor-output",
         action="store_true",
         help="Display RGB/depth sensor output live in a window"
     )
+
     return parser
 
 

@@ -35,6 +35,9 @@ if __name__ == "__main__":
     cmd_args = cmd_parser.parse_args()
     experiments = cmd_args.experiments
 
+    if cmd_args.show-sensor-output:
+        experiments["show_sensor_output"] = True
+
     if cmd_args.quiet_habitat_logs:
         os.environ["MAGNUM_LOG"] = "quiet"
         os.environ["HABITAT_SIM_LOG"] = "quiet"
