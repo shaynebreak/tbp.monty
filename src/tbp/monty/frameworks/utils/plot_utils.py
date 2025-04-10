@@ -96,11 +96,29 @@ def plot_graph(
         ax.set_xlim([0, ax_lim])
         ax.set_ylim([ax_lim, 0])
     else:
-        ax.set_aspect("equal")
+        _set_axes_equal(ax)
     ax.view_init(rotation, 180)
     fig.tight_layout()
     return fig
 
+def _set_axes_equal(ax):
+    """Set 3D plot axes to equal scale (workaround for Axes3D)."""
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    y_range = abs(y_limits[1] - y_limits[0])
+    z_range = abs(z_limits[1] - z_limits[0])
+    max_range = max(x_range, y_range, z_range)
+
+    x_middle = sum(x_limits) / 2
+    y_middle = sum(y_limits) / 2
+    z_middle = sum(z_limits) / 2
+
+    ax.set_xlim3d([x_middle - max_range / 2, x_middle + max_range / 2])
+    ax.set_ylim3d([y_middle - max_range / 2, y_middle + max_range / 2])
+    ax.set_zlim3d([z_middle - max_range / 2, z_middle + max_range / 2])
 
 def plot_sample_animation(all_obs, patch_obs, viz_obs):
     """Plot video of sampled oservations."""

@@ -124,9 +124,15 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         self.setup_sensor_ax()
 
     def show_observations(self, observation, step):
+        action_name = getattr(self.dataloader, "_action", None)
+        if action_name is not None:
+            action_name = action_name.__class__.__name__
+        else:
+            action_name = "Unknown"
+
         self.fig.suptitle(
             f"Observation at step {step}"
-            + ("" if step == 0 else f"\n{self.dataloader._action.split('.')[-1]}")
+            + ("" if step == 0 else f"\n{action_name}")
         )
         self.show_view_finder(observation, step)
         self.show_patch(observation)
