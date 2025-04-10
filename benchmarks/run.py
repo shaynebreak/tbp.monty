@@ -37,14 +37,18 @@ if __name__ == "__main__":
     print("✅ Parsed args:", cmd_args)
     experiments = cmd_args.experiments
 
-    if cmd_args.show_sensor_output:
-        cmd_args["experiment_args"]["show_sensor_output"] = True
-        print("✅ show-sensor-output detected: adding sensor output visualization.")
-
     if cmd_args.quiet_habitat_logs:
         os.environ["MAGNUM_LOG"] = "quiet"
         os.environ["HABITAT_SIM_LOG"] = "quiet"
 
     CONFIGS = load_configs(experiments)
+
+    # Inject flag into experiment config(s)
+    for config in CONFIGS.values():
+        config.setdefault("experiment_args", {})
+        config["experiment_args"]["show_sensor_output"] = cmd_args.show_sensor_output
+
+    if cmd_args.show_sensor_output:
+        print("✅ show-sensor-output detected: adding sensor output visualization.")
 
     main(all_configs=CONFIGS, experiments=cmd_args.experiments)
