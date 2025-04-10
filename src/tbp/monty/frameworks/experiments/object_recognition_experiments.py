@@ -69,6 +69,10 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         if self.show_sensor_output:
             self.initialize_online_plotting()
 
+    def post_episode(self, steps):
+        if self.show_sensor_output:
+            self.cleanup_online_plotting()
+
     def run_episode_steps(self):
         """Runs one episode of the experiment.
 
@@ -122,6 +126,14 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         # self.colorbar = self.fig.colorbar(None, fraction=0.046, pad=0.04)
         self.setup_camera_ax()
         self.setup_sensor_ax()
+
+    def cleanup_online_plotting(self):
+        if hasattr(self, "fig"):
+            plt.close(self.fig)
+            self.fig = None
+            self.ax = None
+            self.camera_image = None
+            self.depth_image = None
 
     def show_observations(self, observation, step):
         action_name = getattr(self.dataloader, "_action", None)
