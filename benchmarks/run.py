@@ -32,6 +32,7 @@ from tbp.monty.frameworks.run import main  # noqa: E402
 if __name__ == "__main__":
     cmd_args = None
     cmd_parser = create_cmd_parser(experiments=NAMES)
+    print("NAMES =", NAMES)
     cmd_args = cmd_parser.parse_args()
     print("✅ Parsed args:", cmd_args)
     experiments = cmd_args.experiments
