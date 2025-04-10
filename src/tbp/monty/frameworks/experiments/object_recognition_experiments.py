@@ -72,6 +72,7 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
     def post_episode(self, steps):
         if self.show_sensor_output:
             self.cleanup_online_plotting()
+        super().post_episode(steps)
 
     def run_episode_steps(self):
         """Runs one episode of the experiment.
