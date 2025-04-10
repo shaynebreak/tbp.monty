@@ -33,10 +33,12 @@ if __name__ == "__main__":
     cmd_args = None
     cmd_parser = create_cmd_parser(experiments=NAMES)
     cmd_args = cmd_parser.parse_args()
+    print("✅ Parsed args:", cmd_args)
     experiments = cmd_args.experiments
 
-    if cmd_args.show-sensor-output:
+    if cmd_args.show_sensor_output:
         experiments["show_sensor_output"] = True
+        print("✅ show-sensor-output detected: adding sensor output visualization.")
 
     if cmd_args.quiet_habitat_logs:
         os.environ["MAGNUM_LOG"] = "quiet"
