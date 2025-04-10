@@ -141,7 +141,6 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             # No need to close the window
             self.camera_image.set_data(np.zeros_like(self.camera_image.get_array()))
             self.depth_image.set_data(np.zeros_like(self.depth_image.get_array()))
-        super().post_episode(steps)
 
     def show_observations(self, observation, step):
         action_name = getattr(self.dataloader, "_action", None)
