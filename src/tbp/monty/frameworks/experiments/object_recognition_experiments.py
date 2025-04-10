@@ -124,18 +124,17 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             # Figure already exists; reuse
             return
 
-            plt.ion()  # Enable interactive mode just once
-            self.fig, self.ax = plt.subplots(
-                1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
-            )
-            self.fig.subplots_adjust(top=1.1)
+        plt.ion()  # Enable interactive mode just once
+        self.fig, self.ax = plt.subplots(
+            1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
+        )
+        self.fig.subplots_adjust(top=1.1)
 
-            # Initialize placeholders for dynamic updates
-            self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
-            self.depth_image = self.ax[1].imshow(np.zeros((10, 10)), cmap="viridis_r")
-
-            self.setup_camera_ax()
-            self.setup_sensor_ax()
+        # Initialize placeholders for dynamic updates
+        self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
+        self.depth_image = self.ax[1].imshow(np.zeros((10, 10)), cmap="viridis_r")
+        self.setup_camera_ax()
+        self.setup_sensor_ax()
 
     def cleanup_online_plotting(self):
         if self.show_sensor_output:
