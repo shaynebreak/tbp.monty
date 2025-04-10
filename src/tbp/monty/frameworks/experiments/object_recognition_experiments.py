@@ -120,21 +120,29 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         return loader_step
 
     def initialize_online_plotting(self):
-        self.fig, self.ax = plt.subplots(
-            1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
-        )
-        self.fig.subplots_adjust(top=1.1)
-        # self.colorbar = self.fig.colorbar(None, fraction=0.046, pad=0.04)
-        self.setup_camera_ax()
-        self.setup_sensor_ax()
+        if hasattr(self, "fig") and self.fig:
+            # Figure already exists; reuse
+            return
+
+            plt.ion()  # Enable interactive mode just once
+            self.fig, self.ax = plt.subplots(
+                1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
+            )
+            self.fig.subplots_adjust(top=1.1)
+
+            # Initialize placeholders for dynamic updates
+            self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
+            self.depth_image = self.ax[1].imshow(np.zeros((10, 10)), cmap="viridis_r")
+
+            self.setup_camera_ax()
+            self.setup_sensor_ax()
 
     def cleanup_online_plotting(self):
-        if hasattr(self, "fig"):
-            plt.close(self.fig)
-            self.fig = None
-            self.ax = None
-            self.camera_image = None
-            self.depth_image = None
+        if self.show_sensor_output:
+            # No need to close the window
+            self.camera_image.set_data(np.zeros_like(self.camera_image.get_array()))
+            self.depth_image.set_data(np.zeros_like(self.depth_image.get_array()))
+        super().post_episode(steps)
 
     def show_observations(self, observation, step):
         action_name = getattr(self.dataloader, "_action", None)
@@ -152,12 +160,9 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         plt.pause(0.00001)
 
     def show_view_finder(self, observation, step, sensor_id="view_finder"):
-        if self.camera_image:
-            self.camera_image.remove()
-
-        view_finder_image = observation[self.model.motor_system.agent_id][sensor_id][
-            "rgba"
-        ]
+        view_finder_image = observation[self.model.motor_system.agent_id][sensor_id]["rgba"]
+    
+        # Optionally modify image with patch outline
         if isinstance(self.dataloader, SaccadeOnImageDataLoader):
             center_pixel_id = np.array([200, 200])
             patch_size = np.array(
@@ -166,20 +171,17 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             raw_obs = self.model.sensor_modules[0].raw_observations
             if len(raw_obs) > 0:
                 center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
-                view_finder_image = add_patch_outline_to_view_finder(
-                    view_finder_image, center_pixel_id, patch_size
-                )
-            self.camera_image = self.ax[0].imshow(view_finder_image, zorder=-99)
-        else:
-            self.camera_image = self.ax[0].imshow(
-                view_finder_image,
-                zorder=-99,
+            view_finder_image = add_patch_outline_to_view_finder(
+                view_finder_image, center_pixel_id, patch_size
             )
-            # Show a square in the middle as a rough estimate of where the patch is
-            if step == 0:
-                image_shape = observation[self.model.motor_system.agent_id][sensor_id][
-                    "rgba"
-                ].shape
+    
+        # Initialize imshow once
+        if self.camera_image is None:
+            self.camera_image = self.ax[0].imshow(view_finder_image, zorder=-99)
+    
+            # Draw square once
+            if step == 0 and not hasattr(self, "_patch_square_added"):
+                image_shape = view_finder_image.shape
                 square = plt.Rectangle(
                     (image_shape[1] * 4.5 // 10, image_shape[0] * 4.5 // 10),
                     image_shape[1] / 10,
@@ -188,19 +190,25 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
                     ec="white",
                 )
                 self.ax[0].add_patch(square)
+                self._patch_square_added = True
+        else:
+            self.camera_image.set_data(view_finder_image)
+    
+        # Add optional text overlay
         if hasattr(self.model.learning_modules[0].graph_memory, "current_mlh"):
             mlh = self.model.learning_modules[0].get_current_mlh()
             if mlh is not None:
                 self.add_text(mlh, pos=view_finder_image.shape[0])
 
     def show_patch(self, observation, sensor_id="patch"):
-        if self.depth_image:
-            self.depth_image.remove()
-        self.depth_image = self.ax[1].imshow(
-            observation[self.model.motor_system.agent_id][sensor_id]["depth"],
-            cmap="viridis_r",
-        )
-        # self.colorbar.update_normal(self.depth_image)
+        patch_image = observation[self.model.motor_system.agent_id][sensor_id]["depth"]
+    
+        if self.depth_image is None:
+            self.depth_image = self.ax[1].imshow(patch_image, cmap="viridis_r")
+            # self.colorbar = self.fig.colorbar(self.depth_image, ax=self.ax[1])
+        else:
+            self.depth_image.set_data(patch_image)
+            # self.colorbar.update_normal(self.depth_image)  # if needed
 
     def add_text(self, mlh, pos):
         if self.text:
