@@ -84,12 +84,13 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             "state": self.state.get(self.agent_id, {})
         }
 
-    def build_action_from_java(self, action_json):
+    def build_action_from_java(self, action_json: dict) -> Action:
+        """Build a full Action object from JSON sent by Java."""
         action_type = action_json["action"]
         agent_id = action_json["agent_id"]
-        rotation_degrees = action_json["rotation_degrees"]
     
         if action_type == "orient_vertical":
+            rotation_degrees = action_json["rotation_degrees"]
             down_distance, forward_distance = self.vertical_distances(rotation_degrees)
             return OrientVertical(
                 agent_id=agent_id,
@@ -99,6 +100,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             )
     
         elif action_type == "orient_horizontal":
+            rotation_degrees = action_json["rotation_degrees"]
             left_distance, forward_distance = self.horizontal_distances(rotation_degrees)
             return OrientHorizontal(
                 agent_id=agent_id,
@@ -107,4 +109,14 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 forward_distance=forward_distance,
             )
     
-        raise ValueError(f"Unsupported action type from Java: {action_type}")
+        elif action_type == "move_tangentially":
+            distance = action_json.get["distance"]
+            direction = self.tangential_direction()
+            return MoveTangentially(
+                agent_id=agent_id,
+                distance=distance,
+                direction=direction,
+            )
+    
+        else:
+            raise ValueError(f"Unknown action type from Java: {action_type}")
