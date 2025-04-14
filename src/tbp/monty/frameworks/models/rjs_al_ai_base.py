@@ -98,7 +98,8 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         agent_id = action_json["agent_id"]
     
         # Get mean depth from sensor module (assumes surface policy structure)
-        mean_depth = self.processed_observations.non_morphological_features["mean_depth"]
+        features = self.processed_observations.non_morphological_features
+        mean_depth = features.get("mean_depth", 1)
     
         def orient_vertical_handler():
             rotation_degrees = action_json["rotation_degrees"]
