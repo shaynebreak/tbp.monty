@@ -49,7 +49,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         self.state = {}  # this must be set externally
 
     def dynamic_call(self) -> Action:
-        self.alhtm.report(self._prepare_input())
+        self.alhtm.report(json.dumps(self._prepare_input()))
         json_action = self.alhtm.getNextAction()
         self.action = self._convert_to_action(json_action)
         return self.action
