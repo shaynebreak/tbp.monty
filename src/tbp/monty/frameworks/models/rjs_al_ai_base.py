@@ -44,8 +44,8 @@ class ALHTMBase(MontyForGraphMatching):
         # action = self.java_ai.getNextAction(java_input)
         # return self._convert_action(action)
         self.alhtm.report(str(observations))
-        last_action = self.alhtm.getNextAction()
-        return last_action
+        self.last_action = self.alhtm.getNextAction()
+        return self.last_action
 
     def _convert_obs(self, observations):
         # Implement this: convert Python dict -> Java structure
