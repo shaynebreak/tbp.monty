@@ -52,8 +52,10 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     def dynamic_call(self) -> Action:
         # TODO: wtf fix or remove if not needed:
         # self.alhtm.report(json.dumps(self._prepare_input()))
-        json_action_str = self.alhtm.getNextAction()
-        self.action = self.build_action_from_java(json.loads(json_action_str))
+        features = self.processed_observations.non_morphological_features
+        if "mean_depth" in features:
+            json_action_str = self.alhtm.getNextAction()
+            self.action = self.build_action_from_java(json.loads(json_action_str))
         return self.action
 
     def predefined_call(self):
