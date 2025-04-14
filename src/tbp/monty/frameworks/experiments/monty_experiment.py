@@ -71,12 +71,10 @@ class MontyExperiment:
         Args:
             config: config specifying variables of the experiment.
         """
-        # TODO: put this back when switches are added...
-        # self.model = self.init_model(
-        #     monty_config=config["monty_config"],
-        #     model_path=self.model_path,
-        # )
-        self.model = ALHTMBase(config=config["monty_config"], model_path=self.model_path)
+        self.model = self.init_model(
+            monty_config=config["monty_config"],
+            model_path=self.model_path,
+        )
         self.load_dataset_and_dataloaders(config)
         self.init_loggers(self.config["logging_config"])
         self.init_counters()
@@ -150,7 +148,21 @@ class MontyExperiment:
         # FIXME: Kept for backward compatibility
         monty_args = monty_config.pop("monty_args", {})
         monty_class = monty_config.pop("monty_class")
-        model = monty_class(
+        #model = monty_class(
+        #    sensor_modules=list(sensor_modules.values()),
+        #    learning_modules=list(learning_modules.values()),
+        #    motor_system=motor_system,
+        #    sm_to_agent_dict=sm_to_agent_dict,
+        #    sm_to_lm_matrix=sm_to_lm_matrix,
+        #    lm_to_lm_matrix=lm_to_lm_matrix,
+        #    lm_to_lm_vote_matrix=lm_to_lm_vote_matrix,
+        #    # Pass any leftover configuration paramters downstream to monty_class
+        #    **monty_config,
+        #    # FIXME: Kept for backward compatibility
+        #    **monty_args,
+        #)
+        # TODO: add switch for monty_class = ALHTMBase or whatever...
+        model = ALHTMBase(
             sensor_modules=list(sensor_modules.values()),
             learning_modules=list(learning_modules.values()),
             motor_system=motor_system,
