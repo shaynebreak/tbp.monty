@@ -45,7 +45,6 @@ class ALHTMMotorSystem(SurfacePolicy):
     ):
         """Initialize and reset motor system."""
         super().__init__(
-            rng,
             alpha,
             min_perc_on_obj=0.25,
             good_view_percentage=0.5,
