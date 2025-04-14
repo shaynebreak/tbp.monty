@@ -1,7 +1,7 @@
 from py4j.java_gateway import JavaGateway, GatewayParameters
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.actions.actions import Action
-from tbp.monty.frameworks.models.motor_policies import SurfacePolicy
+from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
 from tbp.monty.frameworks.actions.action_samplers import ActionSampler
 from tbp.monty.frameworks.actions.actions import (
     Action,
@@ -36,20 +36,9 @@ class ALHTMBase(MontyForGraphMatching):
         return super.step(observations, *args, **kwargs)
 
 class ALHTMMotorSystem(SurfacePolicy):
-    def __init__(
-        self,
-        alpha,
-        min_perc_on_obj=0.25,
-        good_view_percentage=0.5,
-        **kwargs,
-    ):
+    def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
-        super().__init__(
-            alpha,
-            min_perc_on_obj=0.25,
-            good_view_percentage=0.5,
-            **kwargs,
-        )
+        super().__init__(*args, **kwargs)
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
