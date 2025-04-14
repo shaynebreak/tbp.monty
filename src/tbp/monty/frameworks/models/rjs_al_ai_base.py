@@ -35,7 +35,7 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm.report(str(observations))
         return super.step(observations, *args, **kwargs)
 
-class ALHTMMotorSystem(SurfacePolicy):
+class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
