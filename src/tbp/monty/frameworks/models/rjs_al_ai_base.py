@@ -2,33 +2,9 @@ from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
 class ALHTMBase(MontyForGraphMatching):
-    def __init__(
-        self,
-        sensor_modules,
-        learning_modules,
-        motor_system,
-        sm_to_agent_dict,
-        sm_to_lm_matrix,
-        lm_to_lm_matrix,
-        lm_to_lm_vote_matrix,
-        min_eval_steps,
-        min_train_steps,
-        num_exploratory_steps,
-        max_total_steps,
-    ):
-        super().__init__(
-            sensor_modules,
-            learning_modules,
-            motor_system,
-            sm_to_agent_dict,
-            sm_to_lm_matrix,
-            lm_to_lm_matrix,
-            lm_to_lm_vote_matrix,
-            min_eval_steps,
-            min_train_steps,
-            num_exploratory_steps,
-            max_total_steps,
-        )
+    def __init__(self, *args, **kwargs):
+        """Initialize and reset LM."""
+        super().__init__(*args, **kwargs)
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
