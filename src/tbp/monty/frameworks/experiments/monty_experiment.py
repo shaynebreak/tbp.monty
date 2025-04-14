@@ -137,6 +137,8 @@ class MontyExperiment:
         motor_system_args = motor_system_config["motor_system_args"]
         assert issubclass(motor_system_class, MotorSystem)
         # motor_system = motor_system_class(rng=self.rng, **motor_system_args)
+        print("✅ Motor system selected {motor_system_class} args {motor_system_args}.")
+
         motor_system = ALHTMMotorSystem(rng=self.rng, **motor_system_args)
 
         # Get mapping between sensor modules, learning modules and agents
