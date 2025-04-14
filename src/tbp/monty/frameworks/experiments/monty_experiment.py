@@ -40,6 +40,7 @@ from tbp.monty.frameworks.utils.dataclass_utils import (
     config_to_dict,
     get_subset_of_args,
 )
+from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMBase
 
 __all__ = {"MontyExperiment"}
 
@@ -70,10 +71,12 @@ class MontyExperiment:
         Args:
             config: config specifying variables of the experiment.
         """
-        self.model = self.init_model(
-            monty_config=config["monty_config"],
-            model_path=self.model_path,
-        )
+        # TODO: put this back when switches are added...
+        # self.model = self.init_model(
+        #     monty_config=config["monty_config"],
+        #     model_path=self.model_path,
+        # )
+        self.model = ALHTMBase(monty_config=monty_config, model_path=model_path)
         self.load_dataset_and_dataloaders(config)
         self.init_loggers(self.config["logging_config"])
         self.init_counters()
