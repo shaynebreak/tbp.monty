@@ -21,6 +21,7 @@ from tbp.monty.frameworks.actions.actions import (
 )
 from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union, cast
 import json
+import numpy as np
 
 class ALHTMBase(MontyForGraphMatching):
     def __init__(self, *args, **kwargs):
@@ -52,7 +53,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         # TODO: wtf fix or remove if not needed:
         # self.alhtm.report(json.dumps(self._prepare_input()))
         json_action = self.alhtm.getNextAction()
-        self.action = self._convert_to_action(json_action)
+        self.action = self.build_action_from_java(json_action)
         return self.action
 
     def predefined_call(self):
@@ -81,5 +82,63 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             "state": self.state.get(self.agent_id, {})
         }
 
-    def _convert_to_action(self, json_action):
-        return json.loads(json_action, cls=ActionJSONDecoder)
+    def build_action_from_java(self, action_json: dict):
+        """
+        Given partial JSON input from Java, return a fully constructed Action instance.
+        Uses Monty's internal state to compute necessary parameters like depth.
+    
+        Args:
+            action_json (dict): JSON with at least 'action' and 'agent_id'.
+    
+        Returns:
+            Action: The completed Action object.
+        """
+    
+        action_type = action_json["action"]
+        agent_id = action_json["agent_id"]
+    
+        # Get mean depth from sensor module (assumes surface policy structure)
+        mean_depth = self.processed_observations.non_morphological_features["mean_depth"]
+    
+        def orient_vertical_handler():
+            rotation_degrees = action_json["rotation_degrees"]
+            rotation_radians = np.radians(rotation_degrees)
+    
+            down_distance = np.tan(rotation_radians) * mean_depth
+            forward_distance = (
+                mean_depth * (1 - np.cos(rotation_radians)) / np.cos(rotation_radians)
+            )
+    
+            return OrientVertical(
+                agent_id=agent_id,
+                rotation_degrees=rotation_degrees,
+                down_distance=down_distance,
+                forward_distance=forward_distance,
+            )
+    
+        def orient_horizontal_handler():
+            rotation_degrees = action_json["rotation_degrees"]
+            rotation_radians = np.radians(rotation_degrees)
+    
+            left_distance = np.tan(rotation_radians) * mean_depth
+            forward_distance = (
+                mean_depth * (1 - np.cos(rotation_radians)) / np.cos(rotation_radians)
+            )
+    
+            return OrientHorizontal(
+                agent_id=agent_id,
+                rotation_degrees=rotation_degrees,
+                left_distance=left_distance,
+                forward_distance=forward_distance,
+            )
+    
+        # Switch/case style dispatch
+        action_dispatch = {
+            "orient_vertical": orient_vertical_handler,
+            "orient_horizontal": orient_horizontal_handler,
+        }
+    
+        if action_type not in action_dispatch:
+            raise ValueError(f"Unsupported or unknown action type from Java: {action_type}")
+    
+        return action_dispatch[action_type]()
