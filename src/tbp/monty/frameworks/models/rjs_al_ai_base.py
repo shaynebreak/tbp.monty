@@ -32,12 +32,12 @@ class ALHTMMotorSystem(BasePolicy):
         """Initialize and reset motor system."""
         super().__init__(
             rng,
-            action_sampler_args: Dict,
-            action_sampler_class: Type[ActionSampler],
-            agent_id: str,
+            action_sampler_args,
+            action_sampler_class,
+            agent_id,
             switch_frequency,
-            file_name=None,
-            file_names_per_episode=None,
+            file_name,
+            file_names_per_episode,
         )
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
