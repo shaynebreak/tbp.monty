@@ -52,7 +52,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         # TODO: wtf fix or remove if not needed:
         # self.alhtm.report(json.dumps(self._prepare_input()))
         json_action = self.alhtm.getNextAction()
-        self.action = json_action # self._convert_to_action(json_action)
+        self.action = self._convert_to_action(json_action)
         return self.action
 
     def predefined_call(self):
