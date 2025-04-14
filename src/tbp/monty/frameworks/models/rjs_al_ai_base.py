@@ -1,7 +1,7 @@
-from tbp.monty.frameworks.models.monty_base import MontyBase
+from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
-class ALHTMBase(MontyBase):
+class ALHTMBase(MontyForGraphMatching):
     def __init__(
         self,
         sensor_modules,
