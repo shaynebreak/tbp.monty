@@ -45,7 +45,7 @@ class ALHTMMotorSystem(BasePolicy):
         switch_frequency,
         file_name=None,
         file_names_per_episode=None,
-    ):
+        **kwargs):
         """Initialize and reset motor system."""
         super().__init__(
             rng,
@@ -55,7 +55,7 @@ class ALHTMMotorSystem(BasePolicy):
             switch_frequency,
             file_name,
             file_names_per_episode,
-        )
+            **kwargs)
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
