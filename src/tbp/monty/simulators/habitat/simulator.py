@@ -465,7 +465,7 @@ class HabitatSim(HabitatActuator):
         """
         action_name = self.action_name(action)
         if action_name not in self._action_space:
-            for action in self._action_space.keys():
+            for action in self._action_space:
                 print(f"Valid action - {action}")
             raise ValueError(f"Invalid action name: {action_name}")
 
