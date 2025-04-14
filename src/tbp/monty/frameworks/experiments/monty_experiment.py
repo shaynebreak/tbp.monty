@@ -41,6 +41,7 @@ from tbp.monty.frameworks.utils.dataclass_utils import (
     get_subset_of_args,
 )
 from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMBase
+from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMMotorSystem
 
 __all__ = {"MontyExperiment"}
 
@@ -135,7 +136,8 @@ class MontyExperiment:
         motor_system_class = motor_system_config["motor_system_class"]
         motor_system_args = motor_system_config["motor_system_args"]
         assert issubclass(motor_system_class, MotorSystem)
-        motor_system = motor_system_class(rng=self.rng, **motor_system_args)
+        # motor_system = motor_system_class(rng=self.rng, **motor_system_args)
+        motor_system = ALHTMMotorSystem(rng=self.rng, **motor_system_args)
 
         # Get mapping between sensor modules, learning modules and agents
         lm_len = len(learning_modules)
@@ -148,21 +150,7 @@ class MontyExperiment:
         # FIXME: Kept for backward compatibility
         monty_args = monty_config.pop("monty_args", {})
         monty_class = monty_config.pop("monty_class")
-        #model = monty_class(
-        #    sensor_modules=list(sensor_modules.values()),
-        #    learning_modules=list(learning_modules.values()),
-        #    motor_system=motor_system,
-        #    sm_to_agent_dict=sm_to_agent_dict,
-        #    sm_to_lm_matrix=sm_to_lm_matrix,
-        #    lm_to_lm_matrix=lm_to_lm_matrix,
-        #    lm_to_lm_vote_matrix=lm_to_lm_vote_matrix,
-        #    # Pass any leftover configuration paramters downstream to monty_class
-        #    **monty_config,
-        #    # FIXME: Kept for backward compatibility
-        #    **monty_args,
-        #)
-        # TODO: add switch for monty_class = ALHTMBase or whatever...
-        model = ALHTMBase(
+        model = monty_class(
             sensor_modules=list(sensor_modules.values()),
             learning_modules=list(learning_modules.values()),
             motor_system=motor_system,
@@ -175,6 +163,20 @@ class MontyExperiment:
             # FIXME: Kept for backward compatibility
             **monty_args,
         )
+        # TODO: add switch for monty_class = ALHTMBase or whatever...
+        #model = ALHTMBase(
+        #    sensor_modules=list(sensor_modules.values()),
+        #    learning_modules=list(learning_modules.values()),
+        #    motor_system=motor_system,
+        #    sm_to_agent_dict=sm_to_agent_dict,
+        #    sm_to_lm_matrix=sm_to_lm_matrix,
+        #    lm_to_lm_matrix=lm_to_lm_matrix,
+        #    lm_to_lm_vote_matrix=lm_to_lm_vote_matrix,
+        #    # Pass any leftover configuration paramters downstream to monty_class
+        #    **monty_config,
+        #    # FIXME: Kept for backward compatibility
+        #    **monty_args,
+        #)
         model.min_lms_match = self.min_lms_match
 
         if monty_args["num_exploratory_steps"] > self.max_total_steps:
