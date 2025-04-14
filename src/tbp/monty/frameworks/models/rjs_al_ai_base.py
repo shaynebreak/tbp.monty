@@ -10,18 +10,13 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm = self.gateway.entry_point
         self.alhtm.report("Initializing Python Hooks")
 
-    def pass_features_directly_to_motor_system(self, observation):
-        # do nothing so we don't step on our actions...
-        self.last_action = self.alhtm.getNextAction()
-
     def step(self, observations, *args, **kwargs):
         # Convert observations to Java-usable form
         # java_input = self._convert_obs(observations)
         # action = self.java_ai.getNextAction(java_input)
         # return self._convert_action(action)
         self.alhtm.report(str(observations))
-        self.last_action = self.alhtm.getNextAction()
-        return self.last_action
+        pass
 
     def _convert_obs(self, observations):
         # Implement this: convert Python dict -> Java structure
