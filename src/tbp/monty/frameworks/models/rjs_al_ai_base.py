@@ -38,7 +38,6 @@ class ALHTMBase(MontyForGraphMatching):
 class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
-        print(args)
         super().__init__(*args, **kwargs)
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
@@ -53,7 +52,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         # TODO: wtf fix or remove if not needed:
         # self.alhtm.report(json.dumps(self._prepare_input()))
         json_action = self.alhtm.getNextAction()
-        self.action = self._convert_to_action(json_action)
+        self.action = json_action # self._convert_to_action(json_action)
         return self.action
 
     def predefined_call(self):
