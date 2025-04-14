@@ -36,6 +36,7 @@ class ALHTMBase(MontyForGraphMatching):
 
     def pass_features_directly_to_motor_system(self, observation):
         # do nothing so we don't step on our actions...
+        pass
 
     def step(self, observations, *args, **kwargs):
         # Convert observations to Java-usable form
