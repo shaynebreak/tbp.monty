@@ -1,7 +1,7 @@
 from py4j.java_gateway import JavaGateway, GatewayParameters
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.actions.actions import Action
-from tbp.monty.frameworks.models.motor_policies import BasePolicy
+from tbp.monty.frameworks.models.motor_policies import SurfacePolicy
 from tbp.monty.frameworks.actions.action_samplers import ActionSampler
 from tbp.monty.frameworks.actions.actions import (
     Action,
