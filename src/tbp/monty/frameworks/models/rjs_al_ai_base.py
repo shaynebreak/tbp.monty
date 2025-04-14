@@ -19,7 +19,7 @@ class ALHTMBase(MontyForGraphMatching):
         return super.step(observations, *args, **kwargs)
 
 class ALHTMMotorSystem(MotorSystem):
-    def __init__(self, agent_id="agent_id_0"):
+    def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
 
@@ -27,7 +27,6 @@ class ALHTMMotorSystem(MotorSystem):
         self.alhtm = self.gateway.entry_point
         self.alhtm.report("Initializing Python Hooks")
 
-        self.agent_id = agent_id
         self.action = None
         self.is_predefined = False  # required by base class
         self.state = {}  # this must be set externally
