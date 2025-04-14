@@ -124,6 +124,8 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             # Figure already exists; reuse
             return
 
+        print("Actions available: ", self.env._env.action_space)
+
         plt.ion()  # Enable interactive mode just once
         self.fig, self.ax = plt.subplots(
             1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
