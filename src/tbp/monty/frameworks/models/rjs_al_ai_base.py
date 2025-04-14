@@ -11,17 +11,5 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm.report("Initializing Python Hooks")
 
     def step(self, observations, *args, **kwargs):
-        # Convert observations to Java-usable form
-        # java_input = self._convert_obs(observations)
-        # action = self.java_ai.getNextAction(java_input)
-        # return self._convert_action(action)
+        super.step(observations, *args, **kwargs)
         self.alhtm.report(str(observations))
-        pass
-
-    def _convert_obs(self, observations):
-        # Implement this: convert Python dict -> Java structure
-        return observations  # placeholder
-
-    def _convert_action(self, action):
-        # Implement this: convert Java response -> Python dict or expected return type
-        return action  # placeholder
