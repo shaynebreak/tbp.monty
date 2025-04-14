@@ -1,7 +1,7 @@
 from py4j.java_gateway import JavaGateway, GatewayParameters
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.actions.actions import Action
-from tbp.monty.frameworks.models.motor_policies import MotorSystem
+from tbp.monty.frameworks.models.motor_policies import BasePolicy
 from tbp.monty.frameworks.actions.actions import ActionJSONDecoder
 import json
 
@@ -18,10 +18,27 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm.report(str(observations))
         return super.step(observations, *args, **kwargs)
 
-class ALHTMMotorSystem(MotorSystem):
-    def __init__(self, *args, **kwargs):
+class ALHTMMotorSystem(BasePolicy):
+    def __init__(
+        self,
+        rng,
+        action_sampler_args: Dict,
+        action_sampler_class: Type[ActionSampler],
+        agent_id: str,
+        switch_frequency,
+        file_name=None,
+        file_names_per_episode=None,
+    ):
         """Initialize and reset motor system."""
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            rng,
+            action_sampler_args: Dict,
+            action_sampler_class: Type[ActionSampler],
+            agent_id: str,
+            switch_frequency,
+            file_name=None,
+            file_names_per_episode=None,
+        )
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
