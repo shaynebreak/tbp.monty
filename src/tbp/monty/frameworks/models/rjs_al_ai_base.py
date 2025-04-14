@@ -110,7 +110,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             )
     
         elif action_type == "move_tangentially":
-            distance = action_json.get["distance"]
+            distance = action_json["distance"]
             direction = self.tangential_direction()
             return MoveTangentially(
                 agent_id=agent_id,
