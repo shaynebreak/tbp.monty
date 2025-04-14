@@ -76,7 +76,7 @@ class MontyExperiment:
         #     monty_config=config["monty_config"],
         #     model_path=self.model_path,
         # )
-        self.model = ALHTMBase(monty_config=config["monty_config"], model_path=self.model_path)
+        self.model = ALHTMBase(config=config["monty_config"], model_path=self.model_path)
         self.load_dataset_and_dataloaders(config)
         self.init_loggers(self.config["logging_config"])
         self.init_counters()
