@@ -11,5 +11,5 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm.report("Initializing Python Hooks")
 
     def step(self, observations, *args, **kwargs):
-        super.step(observations, *args, **kwargs)
         self.alhtm.report(str(observations))
+        return super.step(observations, *args, **kwargs)
