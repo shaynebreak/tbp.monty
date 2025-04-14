@@ -2,9 +2,9 @@ from tbp.monty.frameworks.models.monty_base import MontyBase
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
 class ALHTMBase(MontyBase):
-    def __init__(self, monty_config, model_path=None):
+    def __init__(self, config, model_path=None):
         # Optional: Initialize base class with compatible signature
-        super().__init__(monty_config=monty_config, model_path=model_path)
+        super().__init__(config, model_path)
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
