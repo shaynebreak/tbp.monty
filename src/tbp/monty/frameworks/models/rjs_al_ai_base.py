@@ -1,3 +1,4 @@
+from tbp.monty.frameworks.models.monty_base import MontyBase
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
 class ALHTMBase(MontyBase):
