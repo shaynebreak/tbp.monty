@@ -35,27 +35,22 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm.report(str(observations))
         return super.step(observations, *args, **kwargs)
 
-class ALHTMMotorSystem(BasePolicy):
+class ALHTMMotorSystem(SurfacePolicy):
     def __init__(
         self,
-        rng,
-        action_sampler_args: Dict,
-        action_sampler_class: Type[ActionSampler],
-        agent_id: str,
-        switch_frequency,
-        file_name=None,
-        file_names_per_episode=None,
-        **kwargs):
+        alpha,
+        min_perc_on_obj=0.25,
+        good_view_percentage=0.5,
+        **kwargs,
+    ):
         """Initialize and reset motor system."""
         super().__init__(
             rng,
-            action_sampler_args,
-            action_sampler_class,
-            agent_id,
-            switch_frequency,
-            file_name,
-            file_names_per_episode,
-            **kwargs)
+            alpha,
+            min_perc_on_obj=0.25,
+            good_view_percentage=0.5,
+            **kwargs,
+        )
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
