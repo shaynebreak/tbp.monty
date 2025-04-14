@@ -2,7 +2,23 @@ from py4j.java_gateway import JavaGateway, GatewayParameters
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.actions.actions import Action
 from tbp.monty.frameworks.models.motor_policies import BasePolicy
-from tbp.monty.frameworks.actions.actions import ActionJSONDecoder
+from tbp.monty.frameworks.actions.action_samplers import ActionSampler
+from tbp.monty.frameworks.actions.actions import (
+    Action,
+    ActionJSONDecoder,
+    ActionJSONEncoder,
+    LookDown,
+    LookUp,
+    MoveForward,
+    MoveTangentially,
+    OrientHorizontal,
+    OrientVertical,
+    SetAgentPose,
+    SetSensorRotation,
+    TurnLeft,
+    TurnRight,
+    VectorXYZ,
+)
 from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union, cast
 import json
 
