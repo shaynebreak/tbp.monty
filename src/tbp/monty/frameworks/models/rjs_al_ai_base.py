@@ -55,7 +55,8 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         if "mean_depth" in features:
             json_action_str = self.alhtm.getNextAction()
             self.action = self.build_action_from_java(json.loads(json_action_str))
-        return self.action
+            return self.action
+        return None
 
     def predefined_call(self):
         raise NotImplementedError("This policy does not support predefined actions.")
