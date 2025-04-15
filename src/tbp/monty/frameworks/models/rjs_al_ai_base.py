@@ -29,6 +29,8 @@ class ALHTMBase(MontyForGraphMatching):
         """Initialize and reset LM."""
         super().__init__(*args, **kwargs)
 
+        alhtm.report("Initializing Python ALHTMBase")
+
     def step(self, observations, *args, **kwargs):
         alhtm.report(str(observations))
 
@@ -40,7 +42,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
 
-        alhtm.report("Initializing Python Hooks")
+        alhtm.report("Initializing Python ALHTMMotorSystem")
 
         self.action = None
         self.is_predefined = False  # required by base class
