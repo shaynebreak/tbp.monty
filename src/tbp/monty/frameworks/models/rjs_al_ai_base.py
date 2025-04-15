@@ -22,6 +22,7 @@ from tbp.monty.frameworks.actions.actions import (
 from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union, cast
 import json
 import numpy as np
+import pydevd_pycharm
 
 class ALHTMBase(MontyForGraphMatching):
     def __init__(self, *args, **kwargs):
@@ -31,6 +32,14 @@ class ALHTMBase(MontyForGraphMatching):
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
         self.alhtm = self.gateway.entry_point
         self.alhtm.report("Initializing Python Hooks")
+
+        pydevd_pycharm.settrace(
+            host="172.17.96.1",
+            port=5678,
+            stdoutToServer=True,
+            stderrToServer=True,
+            suspend=True  # Set to False if you don't want to break immediately
+        )
 
     def step(self, observations, *args, **kwargs):
         self.alhtm.report(str(observations))
