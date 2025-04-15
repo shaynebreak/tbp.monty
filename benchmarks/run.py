@@ -57,8 +57,7 @@ if __name__ == "__main__":
         port=5678,
         stdoutToServer=True,
         stderrToServer=True,
-        suspend=True,  # Set to False if you don't want to break immediately
-        patch_multiprocessing=True
+        suspend=True  # Set to False if you don't want to break immediately
     )
 
     main(all_configs=CONFIGS, experiments=cmd_args.experiments)

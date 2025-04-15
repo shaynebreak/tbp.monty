@@ -38,8 +38,7 @@ class ALHTMBase(MontyForGraphMatching):
             port=5678,
             stdoutToServer=True,
             stderrToServer=True,
-            suspend=True,  # Set to False if you don't want to break immediately
-            patch_multiprocessing=True
+            suspend=True  # Set to False if you don't want to break immediately
         )
 
     def step(self, observations, *args, **kwargs):
