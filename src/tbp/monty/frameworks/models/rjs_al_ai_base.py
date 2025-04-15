@@ -31,7 +31,6 @@ class ALHTMBase(MontyForGraphMatching):
 
     def step(self, observations, *args, **kwargs):
         alhtm.report(str(observations))
-        pass 
 
     def is_motor_only_step(self):
         return False
