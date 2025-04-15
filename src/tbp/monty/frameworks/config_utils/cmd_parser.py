@@ -46,7 +46,6 @@ def create_cmd_parser(experiments: list[str]):
         action="store_true",
         help="Don't run an experiment; just print out the config for visual inspection",
     )
-    print("✅ adding show-sensor-output option to support visualization.")
     parser.add_argument(
 		"-s",
         "--show-sensor-output",
