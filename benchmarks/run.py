@@ -33,9 +33,7 @@ from tbp.monty.frameworks.run import main  # noqa: E402
 if __name__ == "__main__":
     cmd_args = None
     cmd_parser = create_cmd_parser(experiments=NAMES)
-    print("NAMES =", NAMES)
     cmd_args = cmd_parser.parse_args()
-    print("✅ Parsed args:", cmd_args)
     experiments = cmd_args.experiments
 
     if cmd_args.quiet_habitat_logs:
@@ -52,13 +50,16 @@ if __name__ == "__main__":
     if cmd_args.show_sensor_output:
         print("✅ show-sensor-output detected: adding sensor output visualization.")
 
-    pydevd.settrace(
-        host="172.17.96.1",
-        port=5678,
-        stdoutToServer=True,
-        stderrToServer=True,
-        suspend=False,  # Set to False if you don't want to break immediately
-        patch_multiprocessing=True
-    )
+    try:
+        pydevd.settrace(
+            host="172.17.96.1",
+            port=5678,
+            stdoutToServer=True,
+            stderrToServer=True,
+            suspend=False,  # Set to False if you don't want to break immediately
+            patch_multiprocessing=True
+        )
+    except (ConnectionRefusedError, TimeoutError, OSError) as e:
+        print(f"[DEBUG] Skipping debugger attach: {e}")
 
     main(all_configs=CONFIGS, experiments=cmd_args.experiments)
