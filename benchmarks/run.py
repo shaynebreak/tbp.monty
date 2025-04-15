@@ -25,7 +25,6 @@ from benchmarks.configs.names import NAMES
 from tbp.monty.frameworks.config_utils.cmd_parser import create_cmd_parser
 from tbp.monty.frameworks.run_env import setup_env
 import pydevd
-pydevd.patch_multiprocessing()
 
 setup_env()
 
@@ -52,5 +51,14 @@ if __name__ == "__main__":
 
     if cmd_args.show_sensor_output:
         print("✅ show-sensor-output detected: adding sensor output visualization.")
+
+    pydevd.settrace(
+        host="172.17.96.1",
+        port=5678,
+        stdoutToServer=True,
+        stderrToServer=True,
+        suspend=True,  # Set to False if you don't want to break immediately
+        patch_multiprocessing=True
+    )
 
     main(all_configs=CONFIGS, experiments=cmd_args.experiments)
