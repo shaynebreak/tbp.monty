@@ -101,7 +101,7 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
                 self.model.deal_with_time_out()
                 return loader_step
 
-            if self.model.is_motor_only_step:
+            if self.model.is_motor_only_step():
                 logging.debug(
                     "Performing a motor-only step, so passing info straight to motor"
                 )
