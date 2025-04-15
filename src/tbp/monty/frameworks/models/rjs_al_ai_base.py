@@ -33,14 +33,6 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm = self.gateway.entry_point
         self.alhtm.report("Initializing Python Hooks")
 
-        pydevd.settrace(
-            host="172.17.96.1",
-            port=5678,
-            stdoutToServer=True,
-            stderrToServer=True,
-            suspend=True  # Set to False if you don't want to break immediately
-        )
-
     def step(self, observations, *args, **kwargs):
         self.alhtm.report(str(observations))
         return super.step(observations, *args, **kwargs)
