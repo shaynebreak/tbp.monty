@@ -24,6 +24,8 @@ from benchmarks.configs.load import load_configs
 from benchmarks.configs.names import NAMES
 from tbp.monty.frameworks.config_utils.cmd_parser import create_cmd_parser
 from tbp.monty.frameworks.run_env import setup_env
+import pydevd
+pydevd.patch_multiprocessing()
 
 setup_env()
 
