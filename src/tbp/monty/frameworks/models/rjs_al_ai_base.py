@@ -28,13 +28,12 @@ class ALHTMBase(MontyForGraphMatching):
         """Initialize and reset LM."""
         super().__init__(*args, **kwargs)
 
-        self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
-        self.alhtm = self.gateway.entry_point
-        self.alhtm.report("Initializing Python Hooks")
-
     def step(self, observations, *args, **kwargs):
         self.alhtm.report(str(observations))
-        return super.step(observations, *args, **kwargs)
+        pass 
+
+    def is_motor_only_step(self):
+        return False
 
 class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     def __init__(self, *args, **kwargs):

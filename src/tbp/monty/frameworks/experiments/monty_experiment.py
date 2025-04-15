@@ -153,7 +153,21 @@ class MontyExperiment:
         # FIXME: Kept for backward compatibility
         monty_args = monty_config.pop("monty_args", {})
         monty_class = monty_config.pop("monty_class")
-        model = monty_class(
+        # model = monty_class(
+        #     sensor_modules=list(sensor_modules.values()),
+        #     learning_modules=list(learning_modules.values()),
+        #     motor_system=motor_system,
+        #     sm_to_agent_dict=sm_to_agent_dict,
+        #     sm_to_lm_matrix=sm_to_lm_matrix,
+        #     lm_to_lm_matrix=lm_to_lm_matrix,
+        #     lm_to_lm_vote_matrix=lm_to_lm_vote_matrix,
+        #     # Pass any leftover configuration paramters downstream to monty_class
+        #     **monty_config,
+        #     # FIXME: Kept for backward compatibility
+        #     **monty_args,
+        # )
+        # TODO: add switch for monty_class = ALHTMBase or whatever...
+        model = ALHTMBase(
             sensor_modules=list(sensor_modules.values()),
             learning_modules=list(learning_modules.values()),
             motor_system=motor_system,
@@ -166,20 +180,6 @@ class MontyExperiment:
             # FIXME: Kept for backward compatibility
             **monty_args,
         )
-        # TODO: add switch for monty_class = ALHTMBase or whatever...
-        #model = ALHTMBase(
-        #    sensor_modules=list(sensor_modules.values()),
-        #    learning_modules=list(learning_modules.values()),
-        #    motor_system=motor_system,
-        #    sm_to_agent_dict=sm_to_agent_dict,
-        #    sm_to_lm_matrix=sm_to_lm_matrix,
-        #    lm_to_lm_matrix=lm_to_lm_matrix,
-        #    lm_to_lm_vote_matrix=lm_to_lm_vote_matrix,
-        #    # Pass any leftover configuration paramters downstream to monty_class
-        #    **monty_config,
-        #    # FIXME: Kept for backward compatibility
-        #    **monty_args,
-        #)
         model.min_lms_match = self.min_lms_match
 
         if monty_args["num_exploratory_steps"] > self.max_total_steps:
