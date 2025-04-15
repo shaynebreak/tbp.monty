@@ -51,6 +51,10 @@ if __name__ == "__main__":
         print("✅ show-sensor-output detected: adding sensor output visualization.")
 
     try:
+        # Try to open a socket to the debugger
+        sock = socket.create_connection(("172.17.96.1", 5678), timeout=1)
+        sock.close()
+
         pydevd.settrace(
             host="172.17.96.1",
             port=5678,
