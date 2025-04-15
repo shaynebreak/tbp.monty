@@ -1,27 +1,28 @@
+import json
+
 from py4j.java_gateway import JavaGateway, GatewayParameters
-from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
-from tbp.monty.frameworks.actions.actions import Action
-from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
-from tbp.monty.frameworks.actions.action_samplers import ActionSampler
+
 from tbp.monty.frameworks.actions.actions import (
     Action,
-    ActionJSONDecoder,
-    ActionJSONEncoder,
-    LookDown,
-    LookUp,
-    MoveForward,
+#    ActionJSONDecoder,
+#    ActionJSONEncoder,
+#    LookDown,
+#    LookUp,
+#    MoveForward,
     MoveTangentially,
     OrientHorizontal,
     OrientVertical,
-    SetAgentPose,
-    SetSensorRotation,
-    TurnLeft,
-    TurnRight,
-    VectorXYZ,
+#    SetAgentPose,
+#    SetSensorRotation,
+#    TurnLeft,
+#    TurnRight,
+#    VectorXYZ,
 )
-from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union, cast
-import json
-import numpy as np
+from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
+from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
+
+gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
+alhtm = gateway.entry_point
 
 class ALHTMBase(MontyForGraphMatching):
     def __init__(self, *args, **kwargs):
@@ -29,7 +30,7 @@ class ALHTMBase(MontyForGraphMatching):
         super().__init__(*args, **kwargs)
 
     def step(self, observations, *args, **kwargs):
-        self.alhtm.report(str(observations))
+        alhtm.report(str(observations))
         pass 
 
     def is_motor_only_step(self):
@@ -40,9 +41,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
 
-        self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
-        self.alhtm = self.gateway.entry_point
-        self.alhtm.report("Initializing Python Hooks")
+        alhtm.report("Initializing Python Hooks")
 
         self.action = None
         self.is_predefined = False  # required by base class
@@ -53,7 +52,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         # self.alhtm.report(json.dumps(self._prepare_input()))
         features = self.processed_observations.non_morphological_features
         if "mean_depth" in features:
-            json_action_str = self.alhtm.getNextAction()
+            json_action_str = alhtm.getNextAction()
             self.action = self.build_action_from_java(json.loads(json_action_str))
             return self.action
         return None
