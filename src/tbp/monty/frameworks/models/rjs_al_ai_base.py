@@ -22,7 +22,7 @@ from tbp.monty.frameworks.actions.actions import (
 from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union, cast
 import json
 import numpy as np
-import pydevd_pycharm
+import pydevd
 
 class ALHTMBase(MontyForGraphMatching):
     def __init__(self, *args, **kwargs):
@@ -33,7 +33,7 @@ class ALHTMBase(MontyForGraphMatching):
         self.alhtm = self.gateway.entry_point
         self.alhtm.report("Initializing Python Hooks")
 
-        pydevd_pycharm.settrace(
+        pydevd.settrace(
             host="172.17.96.1",
             port=5678,
             stdoutToServer=True,
