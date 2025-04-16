@@ -102,7 +102,6 @@ NAMES.extend(field.name for field in fields(UnsupervisedInferenceExperiments))
 @dataclass
 class MyExperiments:
     # Add your experiment names here
-    pass
-
+    al_htm_obj_recog_experiment: dict
 
 NAMES.extend(field.name for field in fields(MyExperiments))
