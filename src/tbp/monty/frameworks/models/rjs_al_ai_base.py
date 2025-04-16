@@ -131,31 +131,64 @@ class NoOpLearningModule(LearningModule):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def observe(self, *args, **kwargs):
-        # No-op observation hook
-        pass
-
-    def update(self, *args, **kwargs):
-        # No-op update hook
-        pass
-
-    def get_state(self):
-        # Return empty state
-        return {}
-
-    def set_state(self, state):
-        # Accept and ignore state
-        pass
-
+    ###
+    # Methods that interact with the experiment
+    ###
     def reset(self):
-        # Optional: No-op reset
+        """Do things like reset buffers or possible_matches before training."""
+        pass
+
+    def pre_episode(self):
+        """Do things like reset buffers or possible_matches before training."""
         pass
 
     def post_episode(self):
-        # Optional: No-op episode cleanup
+        """Do things like update object models with stored data after an episode."""
         pass
 
-    def post_epoch(self):
-        # Optional: No-op epoch cleanup
+    def set_experiment_mode(self, mode):
+        """Set the experiment mode.
+
+        Update state variables based on which method (train or evaluate) is being called
+        at the experiment level.
+        """
+        pass
+
+    ###
+    # Methods that define the algorithm
+    ###
+    def matching_step(self):
+        """Matching / inference step called inside of monty._step_learning_modules."""
+        pass
+
+    def exploratory_step(self):
+        """Model building step called inside of monty._step_learning_modules."""
+        pass
+
+    def receive_votes(self, votes):
+        """Process voting data sent out from other learning modules."""
+        pass
+
+    def send_out_vote(self):
+        """This method defines what data are sent to other learning modules."""
+        pass
+
+    def propose_goal_state(self):
+        """Return the goal-state proposed by this LM's GSG."""
+        pass
+
+    def get_output(self):
+        """Return learning module output (same format as input)."""
+        pass
+
+    ###
+    # Saving, loading
+    ###
+
+    def state_dict(self):
+        """Return a serializable dict with everything needed to save/load this LM."""
+        pass
+
+    def load_state_dict(self, state_dict):
+        """Take a state dict as an argument and set state for this LM."""
         pass
