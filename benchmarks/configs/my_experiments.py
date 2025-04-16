@@ -18,7 +18,7 @@ import copy
 # e.g.: my_experiment_config = dict(...)
 al_htm_obj_recog_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
 al_htm_obj_recog_experiment.update(
-    monty_config=ALHTMMontyConfig
+    monty_config=ALHTMMontyConfig()
 )
 
 experiments = MyExperiments(
