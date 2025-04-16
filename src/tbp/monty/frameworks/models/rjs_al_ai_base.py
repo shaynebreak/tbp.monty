@@ -138,7 +138,7 @@ class NoOpLearningModule(LearningModule):
         """Do things like reset buffers or possible_matches before training."""
         pass
 
-    def pre_episode(self):
+    def pre_episode(self, primary_target):
         """Do things like reset buffers or possible_matches before training."""
         pass
 
