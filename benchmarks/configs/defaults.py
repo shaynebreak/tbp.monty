@@ -10,11 +10,11 @@
 import os
 
 import numpy as np
-
 from tbp.monty.frameworks.models.evidence_matching import EvidenceGraphLM
 from tbp.monty.frameworks.models.goal_state_generation import EvidenceGoalStateGenerator
-from tbp.monty.frameworks.models.sensor_modules import FeatureChangeSM
 from tbp.monty.frameworks.models.rjs_al_ai_base import NoOpLearningModule
+from tbp.monty.frameworks.models.sensor_modules import FeatureChangeSM
+
 
 default_all_noise_params = {
     "features": {
@@ -107,11 +107,6 @@ default_evidence_lm_config = dict(
 )
 
 default_evidence_1lm_config = dict(learning_module_0=default_evidence_lm_config)
-
-default_noop_lm_config = dict(
-    learning_module_class=NoOpLearningModule,
-    learning_module_args=dict()
-    )
 
 # NOTE: maybe lower once we have better policies
 # Is not really nescessary for good performance but makes sure we don't just overfit

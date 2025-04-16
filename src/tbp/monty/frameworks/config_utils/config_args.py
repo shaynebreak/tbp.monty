@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from itertools import product
 from numbers import Number
 from typing import Callable, Dict, Iterable, List, Mapping, Optional, Union
-from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMMotorSystem, ALHTMBase
+from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMMotorSystem, ALHTMBase, NoOpLearningModule
 
 import numpy as np
 import wandb
@@ -1189,6 +1189,14 @@ class ALHTMMontyConfig(PatchAndViewSOTAMontyConfig):
     """
 
     monty_class: Callable = ALHTMBase
+    learning_module_configs: Union[dataclass, Dict] = field(
+        default_factory=lambda: dict(
+            learning_module_0=dict(
+                learning_module_class=NoOpLearningModule,
+                learning_module_args=dict(),
+            )
+        )
+    )
     motor_system_config: Union[dataclass, Dict] = field(
         default_factory=ALHTMMotorSystemConfig
     )
