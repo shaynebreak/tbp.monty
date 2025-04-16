@@ -20,11 +20,13 @@ from tbp.monty.frameworks.actions.actions import (
 )
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
+from tbp.monty.frameworks.models.abstract_monty_classes import LearningModule
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
 
 class ALHTMBase(MontyForGraphMatching):
+    """ AL HTM Monty class - used for overall processing of observations? """
     def __init__(self, *args, **kwargs):
         """Initialize and reset LM."""
         super().__init__(*args, **kwargs)
@@ -40,6 +42,7 @@ class ALHTMBase(MontyForGraphMatching):
         return False
 
 class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
+    """ AL HTM Motor System class - Interfaces with HTM system running externally to determine movement based on observations. """
     def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
@@ -122,3 +125,37 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
+
+class NoOpLearningModule(LearningModule):
+    """A no-operation LearningModule that does nothing but satisfies interface requirements."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def observe(self, *args, **kwargs):
+        # No-op observation hook
+        pass
+
+    def update(self, *args, **kwargs):
+        # No-op update hook
+        pass
+
+    def get_state(self):
+        # Return empty state
+        return {}
+
+    def set_state(self, state):
+        # Accept and ignore state
+        pass
+
+    def reset(self):
+        # Optional: No-op reset
+        pass
+
+    def post_episode(self):
+        # Optional: No-op episode cleanup
+        pass
+
+    def post_epoch(self):
+        # Optional: No-op epoch cleanup
+        pass

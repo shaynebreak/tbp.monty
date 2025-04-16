@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 from itertools import product
 from numbers import Number
 from typing import Callable, Dict, Iterable, List, Mapping, Optional, Union
+from tbp.monty.frameworks.models.rjs_al_ai_base import ALHTMMotorSystem, ALHTMBase
 
 import numpy as np
 import wandb
@@ -443,6 +444,22 @@ class MotorSystemConfigCurInformedSurfaceGoalStateDriven:
         )
     )
 
+
+# AL HTM motor system - uses HTM system to determine motor actions.
+@dataclass
+class ALHTMMotorSystemConfig:
+    motor_system_class: MotorSystem = ALHTMMotorSystem
+    motor_system_args: Union[Dict, dataclass] = field(
+        default_factory=lambda: make_curv_surface_policy_config(
+            desired_object_distance=0.025,
+            alpha=0.1,
+            pc_alpha=0.5,
+            max_pc_bias_steps=32,
+            min_general_steps=8,
+            min_heading_steps=12,
+            use_goal_state_driven_actions=True,
+        )
+    )
 
 # -------------
 # Monty Configurations
@@ -1161,6 +1178,20 @@ class FiveLMMontySOTAConfig(FiveLMMontyConfig):
         default_factory=MotorSystemConfigInformedGoalStateDriven
     )
 
+
+@dataclass
+class ALHTMMontyConfig(PatchAndViewSOTAMontyConfig):
+    """The best existing combination of sensor module and policy attributes.
+
+    Uses the best existing combination of sensor module and policy attributes,
+    including the feature-change sensor module, and the hypothesis-testing action
+    policy.
+    """
+
+    monty_class: Callable = ALHTMBase
+    motor_system_config: Union[dataclass, Dict] = field(
+        default_factory=ALHTMMotorSystemConfig
+    )
 
 """
 Multi-LM Config Utils.
