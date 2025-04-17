@@ -135,10 +135,9 @@ class NoOpLearningModule(LearningModule):
 
         self.buffer = None
         self.learning_module_id = "LM_0"
-
+        self.stepwise_targets_list = None
         self.graph_memory = None
         self.gsg = None
-
         self.mode = None  # initialize to neither training nor testing
         # Dictionaries to tell which objects were involved in building a graph
         # and which graphs correspond to each target object
@@ -215,3 +214,6 @@ class NoOpLearningModule(LearningModule):
 
     def get_all_known_object_ids(self):
         return None
+
+    def add_lm_processing_to_buffer_stats(self):
+        pass
