@@ -20,6 +20,7 @@ from tbp.monty.frameworks.actions.actions import (
 )
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM, GraphMemory
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
+from tbp.monty.frameworks.models.goal_state_generation import GraphGoalStateGenerator
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
@@ -135,8 +136,9 @@ class NoOpLearningModule(GraphLM):
         self.graph_memory = GraphMemory()
         self.graph_memory.get_initial_hypotheses = lambda: ([], [])
         self.graph_memory.load_state_dict = lambda _: None
+        self.gsg = GraphGoalStateGenerator(self, gsg_args=None)
+        self.gsg.reset()
 
-        self.GSG = None
         self.matching_buffer = None
         self.gsg_buffer = None
         self.input_feature_modules = []
