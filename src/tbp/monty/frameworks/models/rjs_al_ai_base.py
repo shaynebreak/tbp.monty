@@ -21,6 +21,7 @@ from tbp.monty.frameworks.actions.actions import (
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
 from tbp.monty.frameworks.models.abstract_monty_classes import LearningModule
+from pickle import NONE
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
@@ -192,3 +193,6 @@ class NoOpLearningModule(LearningModule):
     def load_state_dict(self, state_dict):
         """Take a state dict as an argument and set state for this LM."""
         pass
+
+    def get_all_known_object_ids(self):
+        return None
