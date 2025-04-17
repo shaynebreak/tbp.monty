@@ -41,9 +41,21 @@ class ALHTMBase(MontyForGraphMatching):
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
         alhtm.report(str(agent_state))
 
-        sensor_and_type = alhtm.getObservationRequest()
-        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist())
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
+
+    def report_observation(self, observations):
+        """ extracts and sends to HTM the requested observation(s) from the full list of observations """
+
+        # pull requested sensor and data from observations...
+        sensor_and_type = alhtm.getObservationRequest()
+        requested_observation = observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist()
+
+        # convert to Java safe type...
+        java_double = gateway.jvm.double
+        java_array = gateway.new_array(java_double, requested_observation.shape[0], requested_observation.shape[1])
+
+        # send off to AL HTM...
+        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], java_array)
 
     @property
     def is_motor_only_step(self):
