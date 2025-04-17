@@ -63,7 +63,11 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
     def save_raw_memmap(self, sensor_id, sensor_type, observation_array):
+        # Ensure float64 format (double)
+        dtype = np.float64
         flat_array = np.array(observation_array, dtype=dtype).flatten()
+
+        # lookup or cache the memory mapped file...
         key = (sensor_id, sensor_type)
         if key in alhtm_observation_data:
             fp = alhtm_observation_data[key]
@@ -73,8 +77,9 @@ class ALHTMBase(MontyForGraphMatching):
             filename = f"{sensor_id}_{sensor_type}.raw"
             filepath = os.path.join(SHARED_DIR, filename)
 
-            # Ensure float64 format (double)
-            dtype = np.float64
+            # If the file exists, delete it to ensure shape/dtype match
+            if os.path.exists(filepath):
+                os.remove(filepath)
 
             # Write memory-mapped double data
             fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
