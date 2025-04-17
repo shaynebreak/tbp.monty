@@ -135,7 +135,7 @@ class NoOpLearningModule(LearningModule):
 
         self.buffer = None
         self.learning_module_id = "LM_0"
-        self.stepwise_targets_list = None
+        self.stepwise_targets_list = []
         self.graph_memory = None
         self.gsg = None
         self.mode = None  # initialize to neither training nor testing
@@ -178,11 +178,11 @@ class NoOpLearningModule(LearningModule):
     ###
     def matching_step(self):
         """Matching / inference step called inside of monty._step_learning_modules."""
-        pass
+        self.stepwise_targets_list = []
 
     def exploratory_step(self):
         """Model building step called inside of monty._step_learning_modules."""
-        pass
+        self.stepwise_targets_list = []
 
     def receive_votes(self, votes):
         """Process voting data sent out from other learning modules."""
