@@ -63,6 +63,14 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             return self.action
         return None
 
+    def touch_object(self, raw_observation, view_sensor_id) -> Action:
+        """ don't perform any action during the experiment that doesn't come from AL """
+        pass
+
+    def orient_to_object(self, *args, **kwargs):
+        """ don't perform any action during the experiment that doesn't come from AL """
+        pass
+    
     def predefined_call(self):
         raise NotImplementedError("This policy does not support predefined actions.")
 
