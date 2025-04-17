@@ -36,15 +36,15 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.report("Initializing Python ALHTMBase")
 
     def step(self, observations, *args, **kwargs):
-        agent_state = dict();
-        agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
-        agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
-        alhtm.report(str(agent_state))
-
+        self.report_observation(observations)
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
+        agent_state = dict();
+        agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
+        agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
+        alhtm.report(str(agent_state))
 
         # pull requested sensor and data from observations...
         sensor_and_type = alhtm.getObservationRequest()
