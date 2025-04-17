@@ -127,11 +127,20 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
 
 
 class NoOpLearningModule(GraphLM):
-    """A no-op Learning Module compatible with MontyForGraphMatching."""
+    """A no-op Learning Module that satisfies GraphLM interface without learning."""
 
     def __init__(self, initialize_base_modules=False):
-        # Avoid setting up graph memory or GSG
         super().__init__(initialize_base_modules=initialize_base_modules)
+
+        # Override expected attributes with dummy values
+        self.graph_memory = None  # or a mock/dummy object if needed
+        self.GSG = None
+        self.matching_buffer = None
+        self.gsg_buffer = None
+        self.input_feature_modules = []
+        self.output_feature_modules = []
+
+        # You can still keep the rest as before
         self.learning_module_id = "NoopLM"
         self.mode = "eval"
         self.has_detailed_logger = False
@@ -140,26 +149,25 @@ class NoOpLearningModule(GraphLM):
         self.detected_pose = [None for _ in range(7)]
         self.terminal_state = None
 
+    def load_state_dict(self, state_dict, strict=False):
+        """Ignore loading state since this is a no-op."""
+        return
+
     def matching_step(self, observations):
-        """Don't do anything for matching."""
         self.buffer.append_input_states(observations)
         self.buffer.update_stats({"noop": True}, append=self.has_detailed_logger)
         self.buffer.stepwise_targets_list.append("no_label")
 
     def exploratory_step(self, observations):
-        """Skip memory updates during exploration."""
         self.buffer.append_input_states(observations)
 
     def post_episode(self):
-        """Do nothing during post-episode."""
         pass
 
     def send_out_vote(self):
-        """Vote for nothing — empty set."""
         return set()
 
     def receive_votes(self, vote_data):
-        """Ignore votes."""
         pass
 
     def get_possible_matches(self):
