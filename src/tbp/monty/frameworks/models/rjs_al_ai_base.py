@@ -50,6 +50,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         super().__init__(*args, **kwargs)
 
         alhtm.report("Initializing Python ALHTMMotorSystem")
+        alhtm.reset()
 
         self.action = None
         self.is_predefined = False  # required by base class
