@@ -126,7 +126,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             raise ValueError(f"Unknown action type from Java: {action_type}")
 
 
-class NoOpGraphLM(GraphLM):
+class NoOpLearningModule(GraphLM):
     """A no-op Learning Module compatible with MontyForGraphMatching."""
 
     def __init__(self, initialize_base_modules=False):
