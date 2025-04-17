@@ -133,7 +133,7 @@ class NoOpLearningModule(GraphLM):
 
         # Provide dummy components
         self.graph_memory = GraphMemory()
-        self.graph_memory.get_initial_hypotheses = lambda: ([], [], [])
+        self.graph_memory.get_initial_hypotheses = lambda: ([], [])
         self.graph_memory.load_state_dict = lambda _: None
 
         self.GSG = None
