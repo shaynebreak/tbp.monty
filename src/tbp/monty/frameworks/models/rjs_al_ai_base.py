@@ -12,7 +12,7 @@ from tbp.monty.frameworks.actions.actions import (
     MoveTangentially,
     OrientHorizontal,
     OrientVertical,
-#    SetAgentPose,
+    SetAgentPose,
 #    SetSensorRotation,
 #    TurnLeft,
 #    TurnRight,
@@ -21,6 +21,8 @@ from tbp.monty.frameworks.actions.actions import (
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM, GraphMemory
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
 from tbp.monty.frameworks.models.goal_state_generation import GraphGoalStateGenerator
+import numpy as np
+import quaternion  # ensure this is imported
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
@@ -56,12 +58,12 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     def dynamic_call(self) -> Action:
         # TODO: wtf fix or remove if not needed:
         # self.alhtm.report(json.dumps(self._prepare_input()))
-        features = self.processed_observations.non_morphological_features
-        if "mean_depth" in features:
-            json_action_str = alhtm.getNextAction()
-            self.action = self.build_action_from_java(json.loads(json_action_str))
-            return self.action
-        return MoveForward(self.agent_id, 0.0)
+        # features = self.processed_observations.non_morphological_features
+        # if "mean_depth" in features:
+        json_action_str = alhtm.getNextAction()
+        self.action = self.build_action_from_java(json.loads(json_action_str))
+        return self.action
+        # return MoveForward(self.agent_id, 0.0)
 
     def predefined_call(self):
         raise NotImplementedError("This policy does not support predefined actions.")
@@ -93,7 +95,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         """Build a full Action object from JSON sent by Java."""
         action_type = action_json["action"]
         agent_id = action_json["agent_id"]
-    
+
         if action_type == "orient_vertical":
             rotation_degrees = action_json["rotation_degrees"]
             down_distance, forward_distance = self.vertical_distances(rotation_degrees)
@@ -103,7 +105,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 down_distance=down_distance,
                 forward_distance=forward_distance,
             )
-    
+
         elif action_type == "orient_horizontal":
             rotation_degrees = action_json["rotation_degrees"]
             left_distance, forward_distance = self.horizontal_distances(rotation_degrees)
@@ -113,7 +115,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 left_distance=left_distance,
                 forward_distance=forward_distance,
             )
-    
+
         elif action_type == "move_tangentially":
             distance = action_json["distance"]
             direction = action_json["direction"]
@@ -122,7 +124,24 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 distance=distance,
                 direction=direction,
             )
+
+        elif action_type == "set_agent_pose":
+            # Rotation delta is expected as [w, x, y, z]
+            rotation_delta_list = action_json["rotation_delta"]
+            rotation_delta = np.quaternion(*rotation_delta_list)
     
+            current_position = self.state[agent_id]["position"]
+            current_rotation = self.state[agent_id]["rotation"]
+    
+            # Apply delta rotation (delta * current)
+            new_rotation = rotation_delta * current_rotation
+    
+            return SetAgentPose(
+                agent_id=agent_id,
+                location=current_position,
+                rotation_quat=new_rotation
+            )
+
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
 
