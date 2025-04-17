@@ -36,7 +36,10 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.report("Initializing Python ALHTMBase")
 
     def step(self, observations, *args, **kwargs):
-        alhtm.report(str(self.motor_system.state[self.motor_system.agent_id]))
+        agent_state = dict();
+        agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
+        agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
+        alhtm.report(str(agent_state))
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
 
     @property
