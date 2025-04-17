@@ -26,6 +26,7 @@ from tbp.monty.frameworks.utils.sensor_processing import (
     scale_clip,
 )
 from tbp.monty.frameworks.utils.spatial_arithmetics import get_angle
+from pickle import FALSE
 
 
 class DetailedLoggingSM(SensorModuleBase):
@@ -493,6 +494,7 @@ class HabitatDistantPatchSM(DetailedLoggingSM, NoiseMixin):
         # TODO: give more descriptive & distinct names
         self.on_object_obs_only = True
         self.process_all_obs = process_all_obs
+        self.motor_only_step = False
 
     def pre_episode(self):
         """Reset buffer and is_exploring flag."""
