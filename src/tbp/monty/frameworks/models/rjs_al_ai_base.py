@@ -127,7 +127,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             raise ValueError(f"Unknown action type from Java: {action_type}")
 
 
-class NoOpLearningModule(GraphLM):
+class ALHTMLearningModule(GraphLM):
     """A no-op Learning Module that satisfies GraphLM interface without learning."""
     def __init__(self, initialize_base_modules=False):
         super().__init__(initialize_base_modules=initialize_base_modules)
