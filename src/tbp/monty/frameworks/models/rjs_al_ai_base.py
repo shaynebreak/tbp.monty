@@ -1,4 +1,5 @@
 import json
+import os
 
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
@@ -26,8 +27,8 @@ import quaternion  # ensure this is imported
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
-alhtm_observation_data = dict()
 agent_state = dict();
+SHARED_DIR = "/mnt/c/shared-data"
 
 class ALHTMBase(MontyForGraphMatching):
     """ AL HTM Monty class - used for overall processing of observations? """
@@ -55,21 +56,26 @@ class ALHTMBase(MontyForGraphMatching):
         # get or create java safe array...
         rows = len(requested_observation)
         cols = len(requested_observation[0]) if rows > 0 else 0
-        key = (sensor_and_type[0], sensor_and_type[1])
-        if key in alhtm_observation_data:
-            java_array = alhtm_observation_data[key]
-        else:
-            # Create and cache the array
-            java_array = gateway.new_array(gateway.jvm.double, rows, cols)
-            alhtm_observation_data[key] = java_array
-
-        # populate with data...
-        for i in range(rows):
-            for j in range(cols):
-                java_array[i][j] = float(requested_observation[i][j])
+        self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], requested_observation)
 
         # send off to AL HTM...
-        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], java_array)
+        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
+
+    def save_raw_memmap(self, sensor_id, sensor_type, observation_array):
+        filename = f"{sensor_id}_{sensor_type}.raw"
+        filepath = os.path.join(SHARED_DIR, filename)
+
+        # Ensure float64 format (double)
+        shape = observation_array.shape
+        dtype = np.float64
+        flat_array = np.array(observation_array, dtype=dtype).flatten()
+
+        # Write memory-mapped double data
+        fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
+        fp[:] = flat_array[:]
+        fp.flush()
+
+        return filepath, shape
 
     @property
     def is_motor_only_step(self):
