@@ -18,10 +18,8 @@ from tbp.monty.frameworks.actions.actions import (
 #    TurnRight,
 #    VectorXYZ,
 )
-from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching
+from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
-from tbp.monty.frameworks.models.abstract_monty_classes import LearningModule
-from pickle import NONE
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
@@ -127,94 +125,49 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
 
-class NoOpLearningModule(LearningModule):
-    """A no-operation LearningModule that does nothing but satisfies interface requirements."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class NoOpGraphLM(GraphLM):
+    """A no-op Learning Module compatible with MontyForGraphMatching."""
 
-        self.buffer = None
-        self.learning_module_id = "LM_0"
-        self.stepwise_targets_list = []
-        self.stepwise_target_object = None
-        self.graph_memory = None
-        self.gsg = None
-        self.mode = None  # initialize to neither training nor testing
-        # Dictionaries to tell which objects were involved in building a graph
-        # and which graphs correspond to each target object
-        self.target_to_graph_id = dict()
-        self.graph_id_to_target = dict()
+    def __init__(self, initialize_base_modules=False):
+        # Avoid setting up graph memory or GSG
+        super().__init__(initialize_base_modules=initialize_base_modules)
+        self.learning_module_id = "NoopLM"
+        self.mode = "eval"
+        self.has_detailed_logger = False
         self.primary_target = None
         self.detected_object = None
         self.detected_pose = [None for _ in range(7)]
-        # Will always be set during experiment setup, just setting here for unit tests
-        self.has_detailed_logger = False
-        self.symmetry_evidence = 0
+        self.terminal_state = None
 
-    ###
-    # Methods that interact with the experiment
-    ###
-    def reset(self):
-        """Do things like reset buffers or possible_matches before training."""
-        pass
+    def matching_step(self, observations):
+        """Don't do anything for matching."""
+        self.buffer.append_input_states(observations)
+        self.buffer.update_stats({"noop": True}, append=self.has_detailed_logger)
+        self.buffer.stepwise_targets_list.append("no_label")
 
-    def pre_episode(self, primary_target):
-        """Do things like reset buffers or possible_matches before training."""
-        pass
+    def exploratory_step(self, observations):
+        """Skip memory updates during exploration."""
+        self.buffer.append_input_states(observations)
 
     def post_episode(self):
-        """Do things like update object models with stored data after an episode."""
-        pass
-
-    def set_experiment_mode(self, mode):
-        """Set the experiment mode.
-
-        Update state variables based on which method (train or evaluate) is being called
-        at the experiment level.
-        """
-        pass
-
-    ###
-    # Methods that define the algorithm
-    ###
-    def matching_step(self):
-        """Matching / inference step called inside of monty._step_learning_modules."""
-        self.stepwise_targets_list = []
-
-    def exploratory_step(self):
-        """Model building step called inside of monty._step_learning_modules."""
-        self.stepwise_targets_list = []
-
-    def receive_votes(self, votes):
-        """Process voting data sent out from other learning modules."""
+        """Do nothing during post-episode."""
         pass
 
     def send_out_vote(self):
-        """This method defines what data are sent to other learning modules."""
+        """Vote for nothing — empty set."""
+        return set()
+
+    def receive_votes(self, vote_data):
+        """Ignore votes."""
         pass
 
-    def propose_goal_state(self):
-        """Return the goal-state proposed by this LM's GSG."""
-        pass
+    def get_possible_matches(self):
+        return []
 
-    def get_output(self):
-        """Return learning module output (same format as input)."""
-        pass
-
-    ###
-    # Saving, loading
-    ###
-
-    def state_dict(self):
-        """Return a serializable dict with everything needed to save/load this LM."""
-        pass
-
-    def load_state_dict(self, state_dict):
-        """Take a state dict as an argument and set state for this LM."""
-        pass
-
-    def get_all_known_object_ids(self):
+    def get_unique_pose_if_available(self, object_id):
         return None
 
-    def add_lm_processing_to_buffer_stats(self, lm_processed):
-        pass
+    def set_detected_object(self, terminal_state):
+        self.terminal_state = terminal_state
+        self.detected_object = None
