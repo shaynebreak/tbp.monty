@@ -18,7 +18,7 @@ from tbp.monty.frameworks.actions.actions import (
 #    TurnRight,
 #    VectorXYZ,
 )
-from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM
+from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM, GraphMemory
 from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
@@ -128,19 +128,20 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
 
 class NoOpLearningModule(GraphLM):
     """A no-op Learning Module that satisfies GraphLM interface without learning."""
-
     def __init__(self, initialize_base_modules=False):
         super().__init__(initialize_base_modules=initialize_base_modules)
 
-        # Override expected attributes with dummy values
-        self.graph_memory = None  # or a mock/dummy object if needed
+        # Provide dummy components
+        self.graph_memory = GraphMemory()
+        self.graph_memory.get_initial_hypotheses = lambda: ([], [], [])
+        self.graph_memory.load_state_dict = lambda _: None
+
         self.GSG = None
         self.matching_buffer = None
         self.gsg_buffer = None
         self.input_feature_modules = []
         self.output_feature_modules = []
 
-        # You can still keep the rest as before
         self.learning_module_id = "NoopLM"
         self.mode = "eval"
         self.has_detailed_logger = False
@@ -149,17 +150,15 @@ class NoOpLearningModule(GraphLM):
         self.detected_pose = [None for _ in range(7)]
         self.terminal_state = None
 
-    def load_state_dict(self, state_dict, strict=False):
-        """Ignore loading state since this is a no-op."""
-        return
-
     def matching_step(self, observations):
-        self.buffer.append_input_states(observations)
-        self.buffer.update_stats({"noop": True}, append=self.has_detailed_logger)
-        self.buffer.stepwise_targets_list.append("no_label")
+        if self.buffer:
+            self.buffer.append_input_states(observations)
+            self.buffer.update_stats({"noop": True}, append=self.has_detailed_logger)
+            self.buffer.stepwise_targets_list.append("no_label")
 
     def exploratory_step(self, observations):
-        self.buffer.append_input_states(observations)
+        if self.buffer:
+            self.buffer.append_input_states(observations)
 
     def post_episode(self):
         pass
