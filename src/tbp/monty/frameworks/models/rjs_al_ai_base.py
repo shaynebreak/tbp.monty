@@ -40,6 +40,9 @@ class ALHTMBase(MontyForGraphMatching):
         agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
         alhtm.report(str(agent_state))
+
+        sensor_and_type = alhtm.getObservationRequest()
+        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist())
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
 
     @property
