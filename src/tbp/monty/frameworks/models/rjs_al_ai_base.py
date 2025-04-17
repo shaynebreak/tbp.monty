@@ -129,13 +129,13 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             # Rotation delta is expected as [w, x, y, z]
             rotation_delta_list = action_json["rotation_delta"]
             rotation_delta = np.quaternion(*rotation_delta_list)
-    
+
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
-    
-            # Apply delta rotation (delta * current)
-            new_rotation = rotation_delta * current_rotation
-    
+
+            # Apply delta rotation (delta + current)
+            new_rotation = rotation_delta + current_rotation
+
             return SetAgentPose(
                 agent_id=agent_id,
                 location=current_position,
