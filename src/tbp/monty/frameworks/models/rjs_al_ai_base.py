@@ -66,7 +66,6 @@ class ALHTMBase(MontyForGraphMatching):
         filepath = os.path.join(SHARED_DIR, filename)
 
         # Ensure float64 format (double)
-        shape = observation_array.shape
         dtype = np.float64
         flat_array = np.array(observation_array, dtype=dtype).flatten()
 
@@ -74,8 +73,6 @@ class ALHTMBase(MontyForGraphMatching):
         fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
         fp[:] = flat_array[:]
         fp.flush()
-
-        return filepath, shape
 
     @property
     def is_motor_only_step(self):
