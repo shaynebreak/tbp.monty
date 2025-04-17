@@ -59,8 +59,8 @@ if __name__ == "__main__":
         pydevd.settrace(
             host="172.17.96.1",
             port=5678,
-            stdoutToServer=True,
-            stderrToServer=True,
+            stdoutToServer=False,
+            stderrToServer=False,
             suspend=False,  # Set to False if you don't want to break immediately
             patch_multiprocessing=True
         )
