@@ -53,13 +53,13 @@ class ALHTMBase(MontyForGraphMatching):
         requested_observation = observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
         # get or create java safe array...
+        rows = len(requested_observation)
+        cols = len(requested_observation[0]) if rows > 0 else 0
         key = (sensor_and_type[0], sensor_and_type[1])
         if key in alhtm_observation_data:
             java_array = alhtm_observation_data[key]
         else:
             # Create and cache the array
-            rows = len(requested_observation)
-            cols = len(requested_observation[0]) if rows > 0 else 0
             java_array = gateway.new_array(gateway.jvm.double, rows, cols)
             alhtm_observation_data[key] = java_array
 
