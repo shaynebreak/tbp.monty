@@ -215,5 +215,5 @@ class NoOpLearningModule(LearningModule):
     def get_all_known_object_ids(self):
         return None
 
-    def add_lm_processing_to_buffer_stats(self):
+    def add_lm_processing_to_buffer_stats(self, lm_processed):
         pass
