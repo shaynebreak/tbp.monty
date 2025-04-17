@@ -8,7 +8,7 @@ from tbp.monty.frameworks.actions.actions import (
 #    ActionJSONEncoder,
 #    LookDown,
 #    LookUp,
-#    MoveForward,
+    MoveForward,
     MoveTangentially,
     OrientHorizontal,
     OrientVertical,
@@ -61,7 +61,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             json_action_str = alhtm.getNextAction()
             self.action = self.build_action_from_java(json.loads(json_action_str))
             return self.action
-        return None
+        return MoveForward(self.agent_id, 0.0)
 
     def predefined_call(self):
         raise NotImplementedError("This policy does not support predefined actions.")
