@@ -132,6 +132,25 @@ class NoOpLearningModule(LearningModule):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.buffer = None
+        self.learning_module_id = "LM_0"
+
+        self.graph_memory = None
+        self.gsg = None
+
+        self.mode = None  # initialize to neither training nor testing
+        # Dictionaries to tell which objects were involved in building a graph
+        # and which graphs correspond to each target object
+        self.target_to_graph_id = dict()
+        self.graph_id_to_target = dict()
+        self.primary_target = None
+        self.detected_object = None
+        self.detected_pose = [None for _ in range(7)]
+        # Will always be set during experiment setup, just setting here for unit tests
+        self.has_detailed_logger = False
+        self.symmetry_evidence = 0
+
     ###
     # Methods that interact with the experiment
     ###
