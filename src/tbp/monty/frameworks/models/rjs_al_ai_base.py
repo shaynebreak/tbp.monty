@@ -52,6 +52,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         self.action = None
         self.is_predefined = False  # required by base class
         self.state = {}  # this must be set externally
+        self.state[self.agent_id]["motor_only_step"] = False
 
     def dynamic_call(self) -> Action:
         # TODO: wtf fix or remove if not needed:
