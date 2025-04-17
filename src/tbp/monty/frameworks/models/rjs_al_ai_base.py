@@ -26,6 +26,8 @@ import quaternion  # ensure this is imported
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
+alhtm_observation_data = dict()
+agent_state = dict();
 
 class ALHTMBase(MontyForGraphMatching):
     """ AL HTM Monty class - used for overall processing of observations? """
@@ -41,7 +43,7 @@ class ALHTMBase(MontyForGraphMatching):
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
-        agent_state = dict();
+
         agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
         alhtm.report(str(agent_state))
@@ -50,9 +52,21 @@ class ALHTMBase(MontyForGraphMatching):
         sensor_and_type = alhtm.getObservationRequest()
         requested_observation = observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
-        # convert to Java safe type...
-        java_double = gateway.jvm.double
-        java_array = gateway.new_array(java_double, requested_observation.shape[0], requested_observation.shape[1])
+        # get or create java safe array...
+        key = (sensor_and_type[0], sensor_and_type[1])
+        if key in alhtm_observation_data:
+            java_array = alhtm_observation_data[key]
+        else:
+            # Create and cache the array
+            rows = len(requested_observation)
+            cols = len(requested_observation[0]) if rows > 0 else 0
+            java_array = gateway.new_array(gateway.jvm.double, rows, cols)
+            alhtm_observation_data[key] = java_array
+
+        # populate with data...
+        for i in range(rows):
+            for j in range(cols):
+                java_array[i][j] = float(requested_observation[i][j])
 
         # send off to AL HTM...
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], java_array)
