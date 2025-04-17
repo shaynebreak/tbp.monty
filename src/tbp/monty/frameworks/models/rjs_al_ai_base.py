@@ -136,6 +136,7 @@ class NoOpLearningModule(LearningModule):
         self.buffer = None
         self.learning_module_id = "LM_0"
         self.stepwise_targets_list = []
+        self.stepwise_target_object = None
         self.graph_memory = None
         self.gsg = None
         self.mode = None  # initialize to neither training nor testing
