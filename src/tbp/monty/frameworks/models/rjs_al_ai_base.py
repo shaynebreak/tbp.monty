@@ -27,6 +27,7 @@ import quaternion  # ensure this is imported
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 alhtm = gateway.entry_point
+alhtm_observation_data = dict()
 agent_state = dict();
 SHARED_DIR = "/mnt/c/shared-data"
 
@@ -62,17 +63,27 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
     def save_raw_memmap(self, sensor_id, sensor_type, observation_array):
-        filename = f"{sensor_id}_{sensor_type}.raw"
-        filepath = os.path.join(SHARED_DIR, filename)
-
-        # Ensure float64 format (double)
-        dtype = np.float64
         flat_array = np.array(observation_array, dtype=dtype).flatten()
+        key = (sensor_id, sensor_type)
+        if key in alhtm_observation_data:
+            fp = alhtm_observation_data[key]
 
-        # Write memory-mapped double data
-        fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
+        else:
+            # Create and cache the array
+            filename = f"{sensor_id}_{sensor_type}.raw"
+            filepath = os.path.join(SHARED_DIR, filename)
+
+            # Ensure float64 format (double)
+            dtype = np.float64
+
+            # Write memory-mapped double data
+            fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
+            alhtm_observation_data[key] = fp
+
         fp[:] = flat_array[:]
         fp.flush()
+
+
 
     @property
     def is_motor_only_step(self):
