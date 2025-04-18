@@ -199,15 +199,21 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
                 self.add_text(mlh, pos=view_finder_image.shape[0])
 
     def show_patch(self, observation, sensor_id="patch"):
-        patch_image = observation[self.model.motor_system.agent_id][sensor_id]["depth"]
-        if not self.depth_image is None:
-            print(f"[DEBUG] Depth image stats: min={patch_image.min()}, max={patch_image.max()}, shape={patch_image.shape}")
+        patch_image = observation[self.model.motor_system.agent_id][sensor_id]["rgba"]
 
         if self.depth_image is None:
-            self.depth_image = self.ax[1].imshow(patch_image, cmap="viridis_r")
+            self.depth_image = self.ax[1].imshow(patch_image)
         else:
             self.depth_image.set_data(patch_image)
-            self.depth_image.set_clim(vmin=patch_image.min(), vmax=patch_image.max())
+        # patch_image = observation[self.model.motor_system.agent_id][sensor_id]["depth"]
+        # if not self.depth_image is None:
+        #     print(f"[DEBUG] Depth image stats: min={patch_image.min()}, max={patch_image.max()}, shape={patch_image.shape}")
+        #
+        # if self.depth_image is None:
+        #     self.depth_image = self.ax[1].imshow(patch_image, cmap="viridis_r")
+        # else:
+        #     self.depth_image.set_data(patch_image)
+        #     self.depth_image.set_clim(vmin=patch_image.min(), vmax=patch_image.max())
 
     def add_text(self, mlh, pos):
         if self.text:
