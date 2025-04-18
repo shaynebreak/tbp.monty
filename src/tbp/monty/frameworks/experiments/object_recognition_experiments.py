@@ -200,7 +200,8 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
 
     def show_patch(self, observation, sensor_id="patch"):
         patch_image = observation[self.model.motor_system.agent_id][sensor_id]["depth"]
-        print(f"[DEBUG] Depth image stats: min={vmin}, max={vmax}, shape={patch_image.shape}")
+        if not self.depth_image is None:
+            print(f"[DEBUG] Depth image stats: min={patch_image.min()}, max={patch_image.max()}, shape={patch_image.shape}")
 
         if self.depth_image is None:
             self.depth_image = self.ax[1].imshow(patch_image, cmap="viridis_r")
