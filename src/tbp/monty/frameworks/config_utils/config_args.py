@@ -1201,6 +1201,10 @@ class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
         default_factory=ALHTMMotorSystemConfig
     )
 
+    def __post_init__(self):
+        # 👇 This safely overrides just the one flag
+        self.sensor_module_configs["sensor_module_0"]["sensor_module_args"]["process_all_obs"] = True
+
 """
 Multi-LM Config Utils.
 """
