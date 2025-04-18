@@ -42,9 +42,6 @@ class ALHTMBase(MontyForGraphMatching):
     def step(self, observations, *args, **kwargs):
         self.report_observation(observations)
 
-        if not self.motor_system.processed_observations is None:
-            self.motor_system.processed_observations.use_state = True # get the additional features from SM...
-
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
 
     def report_observation(self, observations):
