@@ -1181,11 +1181,7 @@ class FiveLMMontySOTAConfig(FiveLMMontyConfig):
 
 @dataclass
 class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
-    """The best existing combination of sensor module and policy attributes.
-
-    Uses the best existing combination of sensor module and policy attributes,
-    including the feature-change sensor module, and the hypothesis-testing action
-    policy.
+    """AL HTM Monty config - uses AL HTM classes to call HTM system running outside python.
     """
 
     monty_class: Callable = ALHTMBase
@@ -1200,10 +1196,6 @@ class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
     motor_system_config: Union[dataclass, Dict] = field(
         default_factory=ALHTMMotorSystemConfig
     )
-
-    def __post_init__(self):
-        # 👇 This safely overrides just the one flag
-        self.sensor_module_configs["sensor_module_0"]["sensor_module_args"]["process_all_obs"] = True
 
 """
 Multi-LM Config Utils.
