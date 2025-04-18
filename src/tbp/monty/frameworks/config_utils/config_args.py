@@ -1180,7 +1180,7 @@ class FiveLMMontySOTAConfig(FiveLMMontyConfig):
 
 
 @dataclass
-class ALHTMMontyConfig(SurfaceAndViewMontyConfig):
+class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
     """The best existing combination of sensor module and policy attributes.
 
     Uses the best existing combination of sensor module and policy attributes,
