@@ -57,12 +57,12 @@ class ALHTMBase(MontyForGraphMatching):
         # get or create java safe array...
         rows = len(requested_observation)
         cols = len(requested_observation[0]) if rows > 0 else 0
-        self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], requested_observation)
+        self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], rows, cols, requested_observation)
 
         # send off to AL HTM...
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
-    def save_raw_memmap(self, sensor_id, sensor_type, observation_array):
+    def save_raw_memmap(self, sensor_id, sensor_type, rows, cols, observation_array):
         # Ensure float64 format (double)
         dtype = np.float64
         flat_array = np.array(observation_array, dtype=dtype).flatten()
@@ -74,7 +74,7 @@ class ALHTMBase(MontyForGraphMatching):
 
         else:
             # Create and cache the array
-            filename = f"{sensor_id}_{sensor_type}.raw"
+            filename = f"{sensor_id}_{sensor_type}_{rows}x{cols}.raw"
             filepath = os.path.join(SHARED_DIR, filename)
 
             # If the file exists, delete it to ensure shape/dtype match
