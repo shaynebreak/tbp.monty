@@ -173,26 +173,18 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         rgba = data["rgba"]
         depth = data.get("depth", np.zeros_like(rgba[..., 0]))
     
-        # Draw patch outline on the view finder RGBA image
-        try:
-            patch_data = observation[self.model.motor_system.agent_id]["patch"]
-            patch_size = patch_data["rgba"].shape[0]
-    
-            # Try to use pixel_loc from last raw observation, otherwise use center fallback
-            center_pixel_id = np.array([200, 200])  # default fallback
-            raw_obs = self.model.sensor_modules[0].raw_observations
-            if raw_obs and "pixel_loc" in raw_obs[-1]:
-                center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
-    
+        # Draw patch outline using raw observations (if available)
+        raw_obs = self.model.sensor_modules[0].raw_observations
+        if raw_obs:
+            patch_size = observation[self.model.motor_system.agent_id]["patch"]["depth"].shape[0]
+            center_pixel_id = raw_obs[-1].get("pixel_loc", [200, 200])  # Fallback to center
             rgba = add_patch_outline_to_view_finder(rgba, center_pixel_id, patch_size)
-    
-        except Exception as e:
-            print(f"[DEBUG] Could not draw patch outline: {e}")
     
         self.camera_rgba.set_data(rgba)
         self.camera_depth.set_data(depth)
         self.camera_depth.set_clim(vmin=depth.min(), vmax=depth.max())
     
+        # Add optional text overlay
         if hasattr(self.model.learning_modules[0].graph_memory, "current_mlh"):
             mlh = self.model.learning_modules[0].get_current_mlh()
             if mlh is not None:
