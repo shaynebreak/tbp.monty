@@ -172,7 +172,18 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         data = observation[self.model.motor_system.agent_id][sensor_id]
         rgba = data["rgba"]
         depth = data.get("depth", np.zeros_like(rgba[..., 0]))
-    
+
+        center_pixel_id = np.array([200, 200])
+        patch_size = np.array(
+            observation[self.model.motor_system.agent_id]["patch"]["depth"]
+        ).shape[0]
+        raw_obs = self.model.sensor_modules[0].raw_observations
+        if len(raw_obs) > 0:
+            center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
+        rgba = add_patch_outline_to_view_finder(
+            rgba, center_pixel_id, patch_size
+        )
+
         self.camera_rgba.set_data(rgba)
         self.camera_depth.set_data(depth)
         self.camera_depth.set_clim(vmin=depth.min(), vmax=depth.max())
