@@ -82,8 +82,8 @@ class ALHTMBase(MontyForGraphMatching):
             filepath = os.path.join(SHARED_DIR, filename)
 
             # If the file exists, delete it to ensure shape/dtype match
-            if os.path.exists(filepath):
-                os.remove(filepath)
+            #if os.path.exists(filepath):
+            #    os.remove(filepath)
 
             # Write memory-mapped double data
             fp = np.memmap(filepath, dtype=dtype, mode='w+', shape=flat_array.shape)
