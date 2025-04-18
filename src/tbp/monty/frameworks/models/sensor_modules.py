@@ -626,8 +626,9 @@ class FeatureChangeSM(HabitatDistantPatchSM, NoiseMixin):
 
     def step(self, data):
         """Return Features if they changed significantly."""
+        self.process_all_obs = True # force updating observations for now
+
         patch_observation = super().step(data)  # get extracted features
-        patch_observation.use_state = True  # <-- force it
 
         if not patch_observation.use_state:
             # If we already know the features are uninteresting (e.g. invalid point
