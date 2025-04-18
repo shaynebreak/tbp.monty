@@ -167,40 +167,36 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         self.show_view_finder(observation, step)
         self.show_patch(observation)
         plt.pause(0.00001)
-    
+
     def show_view_finder(self, observation, step, sensor_id="view_finder"):
         data = observation[self.model.motor_system.agent_id][sensor_id]
         rgba = data["rgba"]
         depth = data.get("depth", np.zeros_like(rgba[..., 0]))
 
-        center_pixel_id = np.array([200, 200])
-        patch_size = np.array(
-            observation[self.model.motor_system.agent_id]["patch"]["depth"]
-        ).shape[0]
-        raw_obs = self.model.sensor_modules[0].raw_observations
-        if len(raw_obs) > 0:
-            center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
-        rgba = add_patch_outline_to_view_finder(
-            rgba, center_pixel_id, patch_size
-        )
+        # Draw patch outline on the view finder RGBA image
+        try:
+            patch_data = observation[self.model.motor_system.agent_id]["patch"]
+            patch_size = patch_data["rgba"].shape[0]
+
+            # Try to use pixel_loc from last raw observation, otherwise use center fallback
+            center_pixel_id = np.array([200, 200])  # default fallback
+            raw_obs = self.model.sensor_modules[0].raw_observations
+            if raw_obs and "pixel_loc" in raw_obs[-1]:
+                center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
+
+            rgba = add_patch_outline_to_view_finder(rgba, center_pixel_id, patch_size)
+
+        except Exception as e:
+            print(f"[DEBUG] Could not draw patch outline: {e}")
 
         self.camera_rgba.set_data(rgba)
         self.camera_depth.set_data(depth)
         self.camera_depth.set_clim(vmin=depth.min(), vmax=depth.max())
-    
+
         if hasattr(self.model.learning_modules[0].graph_memory, "current_mlh"):
             mlh = self.model.learning_modules[0].get_current_mlh()
             if mlh is not None:
                 self.add_text(mlh, pos=rgba.shape[0])
-    
-    def show_patch(self, observation, sensor_id="patch"):
-        data = observation[self.model.motor_system.agent_id][sensor_id]
-        rgba = data["rgba"]
-        depth = data.get("depth", np.zeros_like(rgba[..., 0]))
-    
-        self.patch_rgba.set_data(rgba)
-        self.patch_depth.set_data(depth)
-        self.patch_depth.set_clim(vmin=depth.min(), vmax=depth.max())
 
 class MontyGeneralizationExperiment(MontyObjectRecognitionExperiment):
     """Remove the tested object model from memory to see what is recognized instead."""
