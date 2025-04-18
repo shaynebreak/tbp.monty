@@ -121,140 +121,75 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
 
     def initialize_online_plotting(self):
         if hasattr(self, "fig") and self.fig:
-            # Figure already exists; reuse
             return
-
-        plt.ion()  # Enable interactive mode just once
+    
+        plt.ion()
         self.fig, self.ax = plt.subplots(
-            1, 2, figsize=(9, 6), gridspec_kw={"width_ratios": [1, 0.8]}
+            2, 2, figsize=(12, 8),
+            gridspec_kw={"height_ratios": [1, 1], "width_ratios": [1, 1]}
         )
-        self.fig.subplots_adjust(top=1.1)
-
-        # Initialize placeholders for dynamic updates
-        self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
-        self.depth_image = self.ax[1].imshow(np.zeros((10, 10)), cmap="viridis_r")
-        self.setup_camera_ax()
-        self.setup_sensor_ax()
-
+        self.fig.subplots_adjust(top=0.9)
+    
+        self.camera_rgba = self.ax[0][0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
+        self.camera_depth = self.ax[0][1].imshow(np.zeros((10, 10)), cmap="viridis_r")
+        self.patch_rgba = self.ax[1][0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
+        self.patch_depth = self.ax[1][1].imshow(np.zeros((10, 10)), cmap="viridis_r")
+    
+        self.setup_axes()
+    
+    def setup_axes(self):
+        self.ax[0][0].set_title("View Finder RGBA")
+        self.ax[0][1].set_title("View Finder Depth")
+        self.ax[1][0].set_title("Patch RGBA")
+        self.ax[1][1].set_title("Patch Depth")
+    
+        for row in self.ax:
+            for col in row:
+                col.set_axis_off()
+    
+        self.text = None
+    
     def cleanup_online_plotting(self):
         if self.show_sensor_output:
-            # No need to close the window
-            self.camera_image.set_data(np.zeros_like(self.camera_image.get_array()))
-            self.depth_image.set_data(np.zeros_like(self.depth_image.get_array()))
-
+            self.camera_rgba.set_data(np.zeros_like(self.camera_rgba.get_array()))
+            self.camera_depth.set_data(np.zeros_like(self.camera_depth.get_array()))
+            self.patch_rgba.set_data(np.zeros_like(self.patch_rgba.get_array()))
+            self.patch_depth.set_data(np.zeros_like(self.patch_depth.get_array()))
+    
     def show_observations(self, observation, step):
         action_name = getattr(self.dataloader, "_action", None)
         if action_name is not None:
             action_name = action_name.__class__.__name__
         else:
             action_name = "Unknown"
-
-        self.fig.suptitle(
-            f"Observation at step {step}"
-            + ("" if step == 0 else f"\n{action_name}")
-        )
+    
+        self.fig.suptitle(f"Observation at step {step}" + ("" if step == 0 else f"\n{action_name}"))
         self.show_view_finder(observation, step)
         self.show_patch(observation)
         plt.pause(0.00001)
-
+    
     def show_view_finder(self, observation, step, sensor_id="view_finder"):
-        view_finder_image = observation[self.model.motor_system.agent_id][sensor_id]["rgba"]
+        data = observation[self.model.motor_system.agent_id][sensor_id]
+        rgba = data["rgba"]
+        depth = data.get("depth", np.zeros_like(rgba[..., 0]))
     
-        # Optionally modify image with patch outline
-        if isinstance(self.dataloader, SaccadeOnImageDataLoader):
-            center_pixel_id = np.array([200, 200])
-            patch_size = np.array(
-                observation[self.model.motor_system.agent_id]["patch"]["depth"]
-            ).shape[0]
-            raw_obs = self.model.sensor_modules[0].raw_observations
-            if len(raw_obs) > 0:
-                center_pixel_id = np.array(raw_obs[-1]["pixel_loc"])
-            view_finder_image = add_patch_outline_to_view_finder(
-                view_finder_image, center_pixel_id, patch_size
-            )
+        self.camera_rgba.set_data(rgba)
+        self.camera_depth.set_data(depth)
+        self.camera_depth.set_clim(vmin=depth.min(), vmax=depth.max())
     
-        # Initialize imshow once
-        if self.camera_image is None:
-            self.camera_image = self.ax[0].imshow(view_finder_image, zorder=-99)
-    
-            # Draw square once
-            if step == 0 and not hasattr(self, "_patch_square_added"):
-                image_shape = view_finder_image.shape
-                square = plt.Rectangle(
-                    (image_shape[1] * 4.5 // 10, image_shape[0] * 4.5 // 10),
-                    image_shape[1] / 10,
-                    image_shape[0] / 10,
-                    fc="none",
-                    ec="white",
-                )
-                self.ax[0].add_patch(square)
-                self._patch_square_added = True
-        else:
-            self.camera_image.set_data(view_finder_image)
-    
-        # Add optional text overlay
         if hasattr(self.model.learning_modules[0].graph_memory, "current_mlh"):
             mlh = self.model.learning_modules[0].get_current_mlh()
             if mlh is not None:
-                self.add_text(mlh, pos=view_finder_image.shape[0])
-
+                self.add_text(mlh, pos=rgba.shape[0])
+    
     def show_patch(self, observation, sensor_id="patch"):
-        patch_image = observation[self.model.motor_system.agent_id][sensor_id]["rgba"]
-
-        if self.depth_image is None:
-            self.depth_image = self.ax[1].imshow(patch_image)
-        else:
-            self.depth_image.set_data(patch_image)
-        # patch_image = observation[self.model.motor_system.agent_id][sensor_id]["depth"]
-        # if not self.depth_image is None:
-        #     print(f"[DEBUG] Depth image stats: min={patch_image.min()}, max={patch_image.max()}, shape={patch_image.shape}")
-        #
-        # if self.depth_image is None:
-        #     self.depth_image = self.ax[1].imshow(patch_image, cmap="viridis_r")
-        # else:
-        #     self.depth_image.set_data(patch_image)
-        #     self.depth_image.set_clim(vmin=patch_image.min(), vmax=patch_image.max())
-
-    def add_text(self, mlh, pos):
-        if self.text:
-            self.text.remove()
-        new_text = r"MLH: "
-        mlh_id = mlh["graph_id"].split("_")
-        for word in mlh_id:
-            new_text += r"$\bf{" + word + "}$ "
-        new_text += f"with evidence {np.round(mlh['evidence'],2)}\n\n"
-        pms = self.model.learning_modules[0].get_possible_matches()
-        graph_ids, evidences = self.model.learning_modules[
-            0
-        ].graph_memory.get_evidence_for_each_graph()
-
-        # Highlight 2nd MLH if present
-        if len(evidences) > 1:
-            top_indices = np.flip(np.argsort(evidences))[0:2]
-            second_id = graph_ids[top_indices[1]].split("_")
-            new_text += "2nd MLH: "
-            for word in second_id:
-                new_text += r"$\bf{" + word + "}$ "
-            new_text += f"with evidence {np.round(evidences[top_indices[1]],2)}\n\n"
-
-        new_text += r"$\bf{Possible}$ $\bf{matches:}$"
-        for gid, ev in zip(graph_ids, evidences):
-            if gid in pms:
-                new_text += f"\n{gid}: {np.round(ev,1)}"
-
-        self.text = self.ax[0].text(0, pos + 30, new_text, va="top")
-
-    def setup_camera_ax(self):
-        self.ax[0].set_title("Camera image")
-        self.ax[0].set_axis_off()
-        self.camera_image = None
-        self.text = None
-
-    def setup_sensor_ax(self):
-        self.ax[1].set_title("Sensor depth image")
-        self.ax[1].set_axis_off()
-        self.depth_image = None
-
+        data = observation[self.model.motor_system.agent_id][sensor_id]
+        rgba = data["rgba"]
+        depth = data.get("depth", np.zeros_like(rgba[..., 0]))
+    
+        self.patch_rgba.set_data(rgba)
+        self.patch_depth.set_data(depth)
+        self.patch_depth.set_clim(vmin=depth.min(), vmax=depth.max())
 
 class MontyGeneralizationExperiment(MontyObjectRecognitionExperiment):
     """Remove the tested object model from memory to see what is recognized instead."""

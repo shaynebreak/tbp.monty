@@ -178,6 +178,13 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 direction=direction,
             )
 
+        elif action_type == "move_forward":
+            distance = action_json["distance"]
+            return MoveForward(
+                agent_id=agent_id,
+                distance=distance
+            )
+
         elif action_type == "set_agent_pose":
             # Rotation delta is expected as [w, x, y, z]
             rotation_delta_list = action_json["rotation_delta"]
