@@ -44,7 +44,6 @@ class ALHTMBase(MontyForGraphMatching):
         self.report_observation(observations)
 
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
-        self.is_done = alhtm.isDone()
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
@@ -91,7 +90,9 @@ class ALHTMBase(MontyForGraphMatching):
         fp[:] = flat_array[:]
         fp.flush()
 
-
+    @property
+    def is_done(self):
+        return alhtm.isDone()
 
     @property
     def is_motor_only_step(self):
