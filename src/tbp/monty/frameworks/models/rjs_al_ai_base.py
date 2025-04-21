@@ -204,7 +204,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 round(current_rotation.x + rotation_delta_list[1], 4),
                 round(current_rotation.y + rotation_delta_list[2], 4),
                 round(current_rotation.z + rotation_delta_list[3], 4),
-            )
+            ).normalized()
 
             return SetAgentPose(
                 agent_id=agent_id,
