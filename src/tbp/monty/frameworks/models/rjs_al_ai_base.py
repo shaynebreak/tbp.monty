@@ -26,7 +26,8 @@ import numpy as np
 import quaternion  # ensure this is imported
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
-alhtm = gateway.entry_point.getAlHtm("demo")
+# alhtm = gateway.entry_point.getAlHtm("demo")
+alhtm = gateway.entry_point.getAlHtm("center_view")
 alhtm_observation_data = dict()
 agent_state = dict();
 SHARED_DIR = "/mnt/c/shared-data"
