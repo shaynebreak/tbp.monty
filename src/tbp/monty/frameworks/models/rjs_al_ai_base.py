@@ -40,6 +40,10 @@ class ALHTMBase(MontyForGraphMatching):
 
         alhtm.report("Initializing Python ALHTMBase")
 
+    def pre_episode(self, primary_target, semantic_id_to_label=None):
+        super().pre_episode(primary_target, semantic_id_to_label)
+        alhtm.reset()
+
     def step(self, observations, *args, **kwargs):
         self.report_observation(observations)
 
@@ -105,7 +109,6 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         super().__init__(*args, **kwargs)
 
         alhtm.report("Initializing Python ALHTMMotorSystem")
-        alhtm.reset()
 
         self.action = None
         self.is_predefined = False  # required by base class
