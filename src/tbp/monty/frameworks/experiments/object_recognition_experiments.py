@@ -86,6 +86,9 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             The number of total steps taken in the episode.
         """
         for loader_step, observation in enumerate(self.dataloader):
+            if(self.force_exit):
+                break;
+
             if self.show_sensor_output:
                 self.show_observations(observation, loader_step)
 
@@ -133,6 +136,7 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
 
         # escape key handler...
         self.fig.canvas.mpl_connect('key_press_event', self.handle_key_press)
+        self.force_exit = False
 
         # Initialize placeholders for dynamic updates
         self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
@@ -150,6 +154,7 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
     def handle_key_press(self, event):
         if event.key == 'escape':
             print("[INFO] ESC pressed — exiting.")
+            self.force_exit = True
             plt.close('all')  # Close all matplotlib windows
             sys.exit(0)       # Exit the program
 
