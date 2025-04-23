@@ -13,7 +13,7 @@ from benchmarks.configs.names import MyExperiments
 from benchmarks.configs.ycb_experiments import CONFIGS
 from tbp.monty.frameworks.config_utils.config_args import ALHTMMontyConfig
 from tbp.monty.frameworks.environments import embodied_data as ED
-from tbp.monty.frameworks.models.motor_policy_configurators import make_curv_surface_policy_config
+from tbp.monty.frameworks.config_utils.policy_setup_utils import make_curv_surface_policy_config
 import copy
 
 # Add your experiment configurations here
