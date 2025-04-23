@@ -17,16 +17,20 @@ import copy
 
 # Add your experiment configurations here
 # e.g.: my_experiment_config = dict(...)
-al_htm_obj_recog_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
-al_htm_obj_recog_experiment.update(
+al_integration_test_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
+al_integration_test_experiment.update(
     monty_config=ALHTMMontyConfig(),
     eval_dataloader_class=ED.EnvironmentDataLoaderPerObject
 )
+
+al_htm_center_view_experiment = copy.deepcopy(al_integration_test_experiment)
+al_htm_center_view_experiment["monty_config"].__dict__["htm_config"] = "center_view"
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
     # configuration here.
     # e.g.: my_experiment=my_experiment_config
-    al_htm_obj_recog_experiment=al_htm_obj_recog_experiment
+    al_integration_test_experiment=al_integration_test_experiment,
+    al_htm_center_view_experiment=al_htm_center_view_experiment
 )
 CONFIGS = asdict(experiments)

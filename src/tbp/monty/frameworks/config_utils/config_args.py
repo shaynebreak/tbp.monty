@@ -1196,6 +1196,7 @@ class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
     motor_system_config: Union[dataclass, Dict] = field(
         default_factory=ALHTMMotorSystemConfig
     )
+    htm_config: str = "demo" # dummy mode by default...
 
 """
 Multi-LM Config Utils.
