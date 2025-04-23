@@ -56,6 +56,7 @@ class ALHTMBase(MontyForGraphMatching):
         # update the agent start with position and rotation for the agent and all sensors...
         agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
+        agent_state["view_finder.world_camera"] = observations[self.motor_system.agent_id]["view_finder"]["world_camera"]
 
         # Add all sensors' positions and rotations dynamically
         sensor_states = self.motor_system.state[self.motor_system.agent_id].get("sensors", {})
