@@ -20,6 +20,7 @@ from tbp.monty.frameworks.environments.embodied_data import SaccadeOnImageDataLo
 from tbp.monty.frameworks.utils.plot_utils import add_patch_outline_to_view_finder
 
 from .monty_experiment import MontyExperiment
+import wandb
 
 # turn interactive plotting off -- call plt.show() to open all figures
 plt.ioff()
@@ -124,6 +125,7 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
 
         # if we're quitting quickly exit...
         if(self.force_exit):
+            wandb.finish()
             self.close()
             raise SystemExit
 
