@@ -46,20 +46,17 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.onNewEpisode()
 
     def step(self, observations, *args, **kwargs):
-        if(self.step_type_count == 0):
-            self.report_observation(observations)
+        self.report_observation(observations)
 
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
-
-        if(self.is_done):
-            self.report_observation(observations)
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
 
         agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
-        alhtm.report(str(agent_state))
+        if(self.step_type_count() == 0):
+            alhtm.report(str(agent_state))
 
         # pull requested sensor and data from observations...
         sensor_and_type = alhtm.getObservationRequest()
@@ -72,6 +69,9 @@ class ALHTMBase(MontyForGraphMatching):
 
         # send off to AL HTM...
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
+
+        if(self.is_done == 0):
+            alhtm.report(str(agent_state))
 
     def save_raw_memmap(self, sensor_id, sensor_type, rows, cols, observation_array):
         # Ensure float64 format (double)
