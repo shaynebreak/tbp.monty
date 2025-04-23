@@ -46,9 +46,13 @@ class ALHTMBase(MontyForGraphMatching):
         alhtm.onNewEpisode()
 
     def step(self, observations, *args, **kwargs):
-        self.report_observation(observations)
+        if(self.step_type_count == 0):
+            self.report_observation(observations)
 
         super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
+
+        if(self.is_done):
+            self.report_observation(observations)
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
