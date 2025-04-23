@@ -121,8 +121,12 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
                 return loader_step
         # handle case where spiral policy calls StopIterator in motor policy
         self.model.set_is_done()
+
+        # if we're quitting quickly exit...
         if(self.force_exit):
+            self.close()
             raise SystemExit
+
         return loader_step
 
     def initialize_online_plotting(self):
