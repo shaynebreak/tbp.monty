@@ -35,6 +35,8 @@ SHARED_DIR = "/mnt/c/shared-data"
 class ALHTMBase(MontyForGraphMatching):
     """ AL HTM Monty class - used for overall processing of observations? """
     def __init__(self, *args, **kwargs):
+        global alhtm
+
         htm_config = getattr(self.config, "htm_config", "demo")
         alhtm = gateway.entry_point.getAlHtm(htm_config)
 
