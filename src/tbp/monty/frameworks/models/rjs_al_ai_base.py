@@ -201,19 +201,19 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
 
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
+            r = np.quaternion.as_rotation_matrix(current_rotation);
+            right = r[:, 0]
+            up = r[:, 1]
+            q_pitch = np.quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+            q_yaw = np.quaternion.from_rotation_vector(rotation_delta_list[1]*up)
 
             # Apply delta rotation (delta + current)
-            new_rotation = np.quaternion(
-                round(current_rotation.w + rotation_delta_list[0], 4),
-                round(current_rotation.x + rotation_delta_list[1], 4),
-                round(current_rotation.y + rotation_delta_list[2], 4),
-                round(current_rotation.z + rotation_delta_list[3], 4),
-            ).normalized()
+            new_rotation = q_yaw * q_pitch * current_rotation
 
             return SetAgentPose(
                 agent_id=agent_id,
                 location=current_position,
-                rotation_quat=new_rotation
+                rotation_quat=new_rotation.normalized()
             )
 
         else:
