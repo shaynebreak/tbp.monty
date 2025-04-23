@@ -10,6 +10,7 @@
 
 import logging
 import os
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -130,6 +131,9 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
         )
         self.fig.subplots_adjust(top=1.1)
 
+        # escape key handler...
+        self.fig.canvas.mpl_connect('key_press_event', self.handle_key_press)
+
         # Initialize placeholders for dynamic updates
         self.camera_image = self.ax[0].imshow(np.zeros((10, 10, 3), dtype=np.uint8))
         self.depth_image = self.ax[1].imshow(np.zeros((10, 10)), cmap="viridis_r")
@@ -141,6 +145,13 @@ class MontyObjectRecognitionExperiment(MontyExperiment):
             # No need to close the window
             self.camera_image.set_data(np.zeros_like(self.camera_image.get_array()))
             self.depth_image.set_data(np.zeros_like(self.depth_image.get_array()))
+
+    # Add this method in your class
+    def handle_key_press(self, event):
+        if event.key == 'escape':
+            print("[INFO] ESC pressed — exiting.")
+            plt.close('all')  # Close all matplotlib windows
+            sys.exit(0)       # Exit the program
 
     def show_observations(self, observation, step):
         action_name = getattr(self.dataloader, "_action", None)
