@@ -56,7 +56,6 @@ class ALHTMBase(MontyForGraphMatching):
         # update the agent start with position and rotation for the agent and all sensors...
         agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
         agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
-        agent_state["view_finder.world_camera"] = observations[self.motor_system.agent_id]["view_finder"]["world_camera"]
 
         # Add all sensors' positions and rotations dynamically
         sensor_states = self.motor_system.state[self.motor_system.agent_id].get("sensors", {})
@@ -69,12 +68,21 @@ class ALHTMBase(MontyForGraphMatching):
         # Merge into agent_state
         agent_state.update(sensor_info)
 
-        if(self.step_type_count == 0):
-            alhtm.report(str(agent_state))
-
         # pull requested sensor and data from observations...
         sensor_and_type = alhtm.getObservationRequest()
-        requested_observation = observations["agent_id_0"][sensor_and_type[0]][sensor_and_type[1]].tolist()
+        requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
+
+        # Grab the patch sensor's world_camera
+        world_camera = observations[self.motor_system.agent_id][sensor_and_type[0]].get("world_camera")
+        agent_state["world_camera"] = world_camera
+
+        # Pass it to the motor system (store as attribute for use in dynamic_call)
+        if world_camera is not None:
+            self.motor_system.world_camera = world_camera
+
+        # log to htm...
+        if(self.step_type_count == 0):
+            alhtm.report(str(agent_state))
 
         # get or create java safe array...
         rows = len(requested_observation)
@@ -84,6 +92,7 @@ class ALHTMBase(MontyForGraphMatching):
         # send off to AL HTM...
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
+        # log to htm...
         if(self.is_done):
             alhtm.report(str(agent_state))
 
@@ -216,19 +225,48 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 distance=distance
             )
 
+        # elif action_type == "set_agent_pose":
+        #     # Rotation delta is expected as [w, x, y, z]
+        #     rotation_delta_list = action_json["rotation_delta"]
+        #
+        #     current_position = self.state[agent_id]["position"]
+        #     current_rotation = self.state[agent_id]["rotation"]
+        #     r = quaternion.as_rotation_matrix(current_rotation);
+        #     right = r[:, 0]
+        #     up = r[:, 1]
+        #     q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+        #     q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
+        #
+        #     # Apply delta rotation (delta + current)
+        #     new_rotation = q_yaw * q_pitch * current_rotation
+        #
+        #     return SetAgentPose(
+        #         agent_id=agent_id,
+        #         location=current_position,
+        #         rotation_quat=new_rotation.normalized()
+        #     )
         elif action_type == "set_agent_pose":
             # Rotation delta is expected as [w, x, y, z]
             rotation_delta_list = action_json["rotation_delta"]
 
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
-            r = quaternion.as_rotation_matrix(current_rotation);
-            right = r[:, 0]
-            up = r[:, 1]
-            q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
-            q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
 
-            # Apply delta rotation (delta + current)
+            # Use world_camera rotation to get world-relative right and up vectors
+            if not hasattr(self, "world_camera"):
+                raise RuntimeError("Missing world_camera for set_agent_pose rotation logic")
+
+            world_camera = self.world_camera  # 4x4 matrix
+            rotation_matrix = world_camera[:3, :3]  # Extract 3x3 rotation part
+
+            right = rotation_matrix[:, 0]  # X-axis
+            up = rotation_matrix[:, 1]     # Y-axis
+
+            # Create world-space rotations
+            q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2] * right)
+            q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1] * up)
+
+            # Apply delta rotation (yaw then pitch)
             new_rotation = q_yaw * q_pitch * current_rotation
 
             return SetAgentPose(
