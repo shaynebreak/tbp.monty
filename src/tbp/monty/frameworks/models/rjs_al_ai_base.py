@@ -131,8 +131,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
 
         global alhtm
 
-        htm_config = getattr(self.config, "htm_config", "demo")
-        alhtm = gateway.entry_point.getAlHtm(htm_config)
+        alhtm = gateway.entry_point.getAlHtm(self.htm_config)
         alhtm.report("Initializing Python ALHTMMotorSystem")
 
         self.action = None
