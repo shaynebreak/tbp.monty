@@ -13,6 +13,7 @@ from benchmarks.configs.names import MyExperiments
 from benchmarks.configs.ycb_experiments import CONFIGS
 from tbp.monty.frameworks.config_utils.config_args import ALHTMMontyConfig
 from tbp.monty.frameworks.environments import embodied_data as ED
+from tbp.monty.frameworks.models.motor_policy_configurators import make_curv_surface_policy_config
 import copy
 
 # Add your experiment configurations here
@@ -24,7 +25,16 @@ al_integration_test_experiment.update(
 )
 
 al_htm_center_view_experiment = copy.deepcopy(al_integration_test_experiment)
-al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args.htm_config = "center_view"
+al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args = make_curv_surface_policy_config(
+    desired_object_distance=0.025,
+    alpha=0.1,
+    pc_alpha=0.5,
+    max_pc_bias_steps=32,
+    min_general_steps=8,
+    min_heading_steps=12,
+    use_goal_state_driven_actions=True,
+    htm_config="center_view"  # override to center_view but I have to do all this other shit also somehow...
+)
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
