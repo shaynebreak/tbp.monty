@@ -70,7 +70,7 @@ class ALHTMBase(MontyForGraphMatching):
         # send off to AL HTM...
         alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
-        if(self.is_done == 0):
+        if(self.is_done):
             alhtm.report(str(agent_state))
 
     def save_raw_memmap(self, sensor_id, sensor_type, rows, cols, observation_array):
