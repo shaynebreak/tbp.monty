@@ -39,7 +39,7 @@ class ALHTMBase(MontyForGraphMatching):
         super().__init__(*args, **kwargs)
 
         alhtm.report("Initializing Python ALHTMBase")
-        alhtm.reset()
+        alhtm.reset(42) # TODO: hook up to see from experiment somehow or another...
 
     def pre_episode(self, primary_target, semantic_id_to_label=None):
         super().pre_episode(primary_target, semantic_id_to_label)
