@@ -24,11 +24,7 @@ al_integration_test_experiment.update(
 )
 
 al_htm_center_view_experiment = copy.deepcopy(al_integration_test_experiment)
-setattr(
-    al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args,
-    "htm_config",
-    "center_view"
-)
+al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args["htm_config"] = "center_view"
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
