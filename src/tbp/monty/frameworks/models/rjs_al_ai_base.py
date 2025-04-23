@@ -35,11 +35,6 @@ SHARED_DIR = "/mnt/c/shared-data"
 class ALHTMBase(MontyForGraphMatching):
     """ AL HTM Monty class - used for overall processing of observations? """
     def __init__(self, *args, **kwargs):
-        global alhtm
-
-        htm_config = getattr(self.config, "htm_config", "demo")
-        alhtm = gateway.entry_point.getAlHtm(htm_config)
-
         """Initialize and reset LM."""
         super().__init__(*args, **kwargs)
 
@@ -134,6 +129,10 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
         """Initialize and reset motor system."""
         super().__init__(*args, **kwargs)
 
+        global alhtm
+
+        htm_config = getattr(self.config, "htm_config", "demo")
+        alhtm = gateway.entry_point.getAlHtm(htm_config)
         alhtm.report("Initializing Python ALHTMMotorSystem")
 
         self.action = None
