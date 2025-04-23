@@ -458,6 +458,7 @@ class ALHTMMotorSystemConfig:
             min_general_steps=8,
             min_heading_steps=12,
             use_goal_state_driven_actions=True,
+            htm_config="demo" # dummy mode by default...
         )
     )
 
@@ -1196,7 +1197,6 @@ class ALHTMMontyConfig(SurfaceAndViewSOTAMontyConfig):
     motor_system_config: Union[dataclass, Dict] = field(
         default_factory=ALHTMMotorSystemConfig
     )
-    htm_config: str = "demo" # dummy mode by default...
 
 """
 Multi-LM Config Utils.
