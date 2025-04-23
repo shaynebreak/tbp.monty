@@ -103,6 +103,9 @@ class ALHTMBase(MontyForGraphMatching):
     def is_motor_only_step(self):
         return False
 
+    def check_if_any_lms_updated(self):
+        return True # we always update our learning module because it's HTM...
+
 class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
     """ AL HTM Motor System class - Interfaces with HTM system running externally to determine movement based on observations. """
     def __init__(self, *args, **kwargs):
