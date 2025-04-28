@@ -226,25 +226,28 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             )
 
         elif action_type == "set_agent_pose":
-            rotation_delta_list = action_json["rotation_delta"]
-            if "position_delta" in action_json:
-                position_delta_list = action_json["position_delta"]
-                x_move_distance = position_delta_list[1]  # x component
-                y_move_distance = position_delta_list[2]  # y component
-            else:
-                # no position_delta provided
-                x_move_distance = 0.0
-                y_move_distance = 0.0 
-
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
             r = quaternion.as_rotation_matrix(current_rotation);
             right = r[:, 0] / np.linalg.norm(r[:, 0])
             up = r[:, 1] / np.linalg.norm(r[:, 1])
-            q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
-            q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
-            q_x = x_move_distance*right;
-            q_y = y_move_distance*up
+
+            if "rotation_delta" in action_json:
+                rotation_delta_list = action_json["rotation_delta"]
+                q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
+                q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+            else:
+                q_yaw = 0.0
+                q_pitch = 0.0
+
+            if "position_delta" in action_json:
+                position_delta_list = action_json["position_delta"]
+                q_x = position_delta_list[1]*right  # x component
+                q_y = position_delta_list[2]*up  # y component
+            else:
+                # no position_delta provided
+                q_x = 0.0
+                q_y = 0.0 
 
             # Apply delta rotation (delta + current)
             new_rotation = q_yaw * q_pitch * current_rotation
