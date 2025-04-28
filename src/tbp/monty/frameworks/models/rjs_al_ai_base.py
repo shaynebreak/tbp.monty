@@ -225,26 +225,6 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 distance=distance
             )
 
-        # elif action_type == "set_agent_pose":
-        #     # Rotation delta is expected as [w, x, y, z]
-        #     rotation_delta_list = action_json["rotation_delta"]
-        #
-        #     current_position = self.state[agent_id]["position"]
-        #     current_rotation = self.state[agent_id]["rotation"]
-        #     r = quaternion.as_rotation_matrix(current_rotation);
-        #     right = r[:, 0]
-        #     up = r[:, 1]
-        #     q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
-        #     q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
-        #
-        #     # Apply delta rotation (delta + current)
-        #     new_rotation = q_yaw * q_pitch * current_rotation
-        #
-        #     return SetAgentPose(
-        #         agent_id=agent_id,
-        #         location=current_position,
-        #         rotation_quat=new_rotation.normalized()
-        #     )
         elif action_type == "set_agent_pose":
             # Rotation delta is expected as [w, x, y, z]
             rotation_delta_list = action_json["rotation_delta"]
@@ -252,28 +232,67 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
 
-            # Use world_camera rotation to get world-relative right and up vectors
-            if not hasattr(self, "world_camera"):
-                raise RuntimeError("Missing world_camera for set_agent_pose rotation logic")
-
-            world_camera = self.world_camera  # 4x4 matrix
-            rotation_matrix = world_camera[:3, :3]  # Extract 3x3 rotation part
-
-            right = rotation_matrix[:, 0]  # X-axis
-            up = rotation_matrix[:, 1]     # Y-axis
-
-            # Create world-space rotations
-            q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2] * right)
-            q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1] * up)
-
-            # Apply delta rotation (yaw then pitch)
-            new_rotation = q_yaw * q_pitch * current_rotation
+            # Apply delta rotation (delta + current)
+            new_rotation = quaternion(
+                round(current_rotation.w + rotation_delta_list[0], 4),
+                round(current_rotation.x + rotation_delta_list[1], 4),
+                round(current_rotation.y + rotation_delta_list[2], 4),
+                round(current_rotation.z + rotation_delta_list[3], 4),
+            ).normalized()
 
             return SetAgentPose(
                 agent_id=agent_id,
                 location=current_position,
-                rotation_quat=new_rotation.normalized()
+                rotation_quat=new_rotation
             )
+            # # Rotation delta is expected as [w, x, y, z]
+            # rotation_delta_list = action_json["rotation_delta"]
+            #
+            # current_position = self.state[agent_id]["position"]
+            # current_rotation = self.state[agent_id]["rotation"]
+            # r = quaternion.as_rotation_matrix(current_rotation);
+            # right = r[:, 0]
+            # up = r[:, 1]
+            # q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+            # q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
+            #
+            # # Apply delta rotation (delta + current)
+            # new_rotation = q_yaw * q_pitch * current_rotation
+            #
+            # return SetAgentPose(
+            #     agent_id=agent_id,
+            #     location=current_position,
+            #     rotation_quat=new_rotation.normalized()
+            # )
+        # elif action_type == "set_agent_pose":
+        #     # Rotation delta is expected as [w, x, y, z]
+        #     rotation_delta_list = action_json["rotation_delta"]
+        #
+        #     current_position = self.state[agent_id]["position"]
+        #     current_rotation = self.state[agent_id]["rotation"]
+        #
+        #     # Use world_camera rotation to get world-relative right and up vectors
+        #     if not hasattr(self, "world_camera"):
+        #         raise RuntimeError("Missing world_camera for set_agent_pose rotation logic")
+        #
+        #     world_camera = self.world_camera  # 4x4 matrix
+        #     rotation_matrix = world_camera[:3, :3]  # Extract 3x3 rotation part
+        #
+        #     right = rotation_matrix[:, 0]  # X-axis
+        #     up = rotation_matrix[:, 1]     # Y-axis
+        #
+        #     # Create world-space rotations
+        #     q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2] * right)
+        #     q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1] * up)
+        #
+        #     # Apply delta rotation (yaw then pitch)
+        #     new_rotation = q_yaw * q_pitch * current_rotation
+        #
+        #     return SetAgentPose(
+        #         agent_id=agent_id,
+        #         location=current_position,
+        #         rotation_quat=new_rotation.normalized()
+        #     )
 
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
