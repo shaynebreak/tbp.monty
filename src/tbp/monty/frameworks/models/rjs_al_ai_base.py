@@ -231,6 +231,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             r = quaternion.as_rotation_matrix(current_rotation);
             right = r[:, 0] / np.linalg.norm(r[:, 0])
             up = r[:, 1] / np.linalg.norm(r[:, 1])
+            forward = r[:, 2] / np.linalg.norm(r[:, 2])
 
             if "rotation_delta" in action_json:
                 rotation_delta_list = action_json["rotation_delta"]
@@ -246,9 +247,10 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 position_delta_list = action_json["position_delta"]
                 q_x = position_delta_list[1]*right  # x component
                 q_y = position_delta_list[2]*up  # y component
+                q_z = position_delta_list[3]*forward  # y component
 
                 # apply delta move (delta + current)
-                new_position = np.array(current_position) + q_x + q_y
+                new_position = np.array(current_position) + q_x + q_y + q_z
             else:
                 # no position_delta provided
                 new_position = current_position
