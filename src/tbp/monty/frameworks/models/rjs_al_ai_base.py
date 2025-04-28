@@ -226,74 +226,37 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             )
 
         elif action_type == "set_agent_pose":
-            # # Rotation delta is expected as [w, x, y, z]
-            # rotation_delta_list = action_json["rotation_delta"]
-            #
-            # current_position = self.state[agent_id]["position"]
-            # current_rotation = self.state[agent_id]["rotation"]
-            #
-            # # Apply delta rotation (delta + current)
-            # new_rotation = np.quaternion(
-            #     round(current_rotation.w + rotation_delta_list[0], 4),
-            #     round(current_rotation.x + rotation_delta_list[1], 4),
-            #     round(current_rotation.y + rotation_delta_list[2], 4),
-            #     round(current_rotation.z + rotation_delta_list[3], 4),
-            # ).normalized()
-            #
-            # return SetAgentPose(
-            #     agent_id=agent_id,
-            #     location=current_position,
-            #     rotation_quat=new_rotation
-            # )
-            # Rotation delta is expected as [w, x, y, z]
             rotation_delta_list = action_json["rotation_delta"]
-            
+            if "position_delta" in action_json:
+                position_delta_list = action_json["position_delta"]
+                x_move_distance = position_delta_list[1]  # x component
+                y_move_distance = position_delta_list[2]  # y component
+            else:
+                # no position_delta provided
+                x_move_distance = 0.0
+                y_move_distance = 0.0 
+
             current_position = self.state[agent_id]["position"]
             current_rotation = self.state[agent_id]["rotation"]
             r = quaternion.as_rotation_matrix(current_rotation);
-            right = r[:, 0]
-            up = r[:, 1]
+            right = r[:, 0] / np.linalg.norm(r[:, 0])
+            up = r[:, 1] / np.linalg.norm(r[:, 1])
             q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
             q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
-            
+            q_x = x_move_distance*right;
+            q_y = y_move_distance*up
+
             # Apply delta rotation (delta + current)
             new_rotation = q_yaw * q_pitch * current_rotation
-            
+
+            # apply delta move (delta + current)
+            new_position = np.array(current_position) + q_x + q_y
+
             return SetAgentPose(
                 agent_id=agent_id,
-                location=current_position,
+                location=new_position,
                 rotation_quat=new_rotation.normalized()
             )
-        # elif action_type == "set_agent_pose":
-        #     # Rotation delta is expected as [w, x, y, z]
-        #     rotation_delta_list = action_json["rotation_delta"]
-        #
-        #     current_position = self.state[agent_id]["position"]
-        #     current_rotation = self.state[agent_id]["rotation"]
-        #
-        #     # Use world_camera rotation to get world-relative right and up vectors
-        #     if not hasattr(self, "world_camera"):
-        #         raise RuntimeError("Missing world_camera for set_agent_pose rotation logic")
-        #
-        #     world_camera = self.world_camera  # 4x4 matrix
-        #     rotation_matrix = world_camera[:3, :3]  # Extract 3x3 rotation part
-        #
-        #     right = rotation_matrix[:, 0]  # X-axis
-        #     up = rotation_matrix[:, 1]     # Y-axis
-        #
-        #     # Create world-space rotations
-        #     q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2] * right)
-        #     q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1] * up)
-        #
-        #     # Apply delta rotation (yaw then pitch)
-        #     new_rotation = q_yaw * q_pitch * current_rotation
-        #
-        #     return SetAgentPose(
-        #         agent_id=agent_id,
-        #         location=current_position,
-        #         rotation_quat=new_rotation.normalized()
-        #     )
-
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
 
