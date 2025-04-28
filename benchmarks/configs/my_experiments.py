@@ -35,12 +35,24 @@ al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_a
     use_goal_state_driven_actions=True,
     htm_config="center_view"  # override to center_view but I have to do all this other shit also somehow...
 )
+al_htm_center_view_orbit_experiment = copy.deepcopy(al_integration_test_experiment)
+al_htm_center_view_orbit_experiment["monty_config"].motor_system_config.motor_system_args = make_curv_surface_policy_config(
+    desired_object_distance=0.025,
+    alpha=0.1,
+    pc_alpha=0.5,
+    max_pc_bias_steps=32,
+    min_general_steps=8,
+    min_heading_steps=12,
+    use_goal_state_driven_actions=True,
+    htm_config="center_view_orbit"  # override to center_view_orbit but I have to do all this other shit also somehow...
+)
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
     # configuration here.
     # e.g.: my_experiment=my_experiment_config
     al_integration_test_experiment=al_integration_test_experiment,
-    al_htm_center_view_experiment=al_htm_center_view_experiment
+    al_htm_center_view_experiment=al_htm_center_view_experiment,
+    al_htm_center_view_orbit_experiment=al_htm_center_view_orbit_experiment
 )
 CONFIGS = asdict(experiments)
