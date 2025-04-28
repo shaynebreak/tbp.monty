@@ -233,7 +233,7 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             current_rotation = self.state[agent_id]["rotation"]
 
             # Apply delta rotation (delta + current)
-            new_rotation = quaternion(
+            new_rotation = np.quaternion(
                 round(current_rotation.w + rotation_delta_list[0], 4),
                 round(current_rotation.x + rotation_delta_list[1], 4),
                 round(current_rotation.y + rotation_delta_list[2], 4),
