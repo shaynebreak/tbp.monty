@@ -236,29 +236,27 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 rotation_delta_list = action_json["rotation_delta"]
                 q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
                 q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+
+                # Apply delta rotation (delta + current)
+                new_rotation = (q_yaw * q_pitch * current_rotation).normalized()
             else:
-                q_yaw = 0.0
-                q_pitch = 0.0
+                new_rotation = current_rotation
 
             if "position_delta" in action_json:
                 position_delta_list = action_json["position_delta"]
                 q_x = position_delta_list[1]*right  # x component
                 q_y = position_delta_list[2]*up  # y component
+
+                # apply delta move (delta + current)
+                new_position = np.array(current_position) + q_x + q_y
             else:
                 # no position_delta provided
-                q_x = 0.0
-                q_y = 0.0 
-
-            # Apply delta rotation (delta + current)
-            new_rotation = q_yaw * q_pitch * current_rotation
-
-            # apply delta move (delta + current)
-            new_position = np.array(current_position) + q_x + q_y
+                new_position = current_position
 
             return SetAgentPose(
                 agent_id=agent_id,
                 location=new_position,
-                rotation_quat=new_rotation.normalized()
+                rotation_quat=new_rotation
             )
         else:
             raise ValueError(f"Unknown action type from Java: {action_type}")
