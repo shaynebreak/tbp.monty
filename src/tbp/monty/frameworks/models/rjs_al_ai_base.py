@@ -226,44 +226,44 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
             )
 
         elif action_type == "set_agent_pose":
-            # Rotation delta is expected as [w, x, y, z]
-            rotation_delta_list = action_json["rotation_delta"]
-
-            current_position = self.state[agent_id]["position"]
-            current_rotation = self.state[agent_id]["rotation"]
-
-            # Apply delta rotation (delta + current)
-            new_rotation = np.quaternion(
-                round(current_rotation.w + rotation_delta_list[0], 4),
-                round(current_rotation.x + rotation_delta_list[1], 4),
-                round(current_rotation.y + rotation_delta_list[2], 4),
-                round(current_rotation.z + rotation_delta_list[3], 4),
-            ).normalized()
-
-            return SetAgentPose(
-                agent_id=agent_id,
-                location=current_position,
-                rotation_quat=new_rotation
-            )
             # # Rotation delta is expected as [w, x, y, z]
             # rotation_delta_list = action_json["rotation_delta"]
             #
             # current_position = self.state[agent_id]["position"]
             # current_rotation = self.state[agent_id]["rotation"]
-            # r = quaternion.as_rotation_matrix(current_rotation);
-            # right = r[:, 0]
-            # up = r[:, 1]
-            # q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
-            # q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
             #
             # # Apply delta rotation (delta + current)
-            # new_rotation = q_yaw * q_pitch * current_rotation
+            # new_rotation = np.quaternion(
+            #     round(current_rotation.w + rotation_delta_list[0], 4),
+            #     round(current_rotation.x + rotation_delta_list[1], 4),
+            #     round(current_rotation.y + rotation_delta_list[2], 4),
+            #     round(current_rotation.z + rotation_delta_list[3], 4),
+            # ).normalized()
             #
             # return SetAgentPose(
             #     agent_id=agent_id,
             #     location=current_position,
-            #     rotation_quat=new_rotation.normalized()
+            #     rotation_quat=new_rotation
             # )
+            # Rotation delta is expected as [w, x, y, z]
+            rotation_delta_list = action_json["rotation_delta"]
+            
+            current_position = self.state[agent_id]["position"]
+            current_rotation = self.state[agent_id]["rotation"]
+            r = quaternion.as_rotation_matrix(current_rotation);
+            right = r[:, 0]
+            up = r[:, 1]
+            q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+            q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
+            
+            # Apply delta rotation (delta + current)
+            new_rotation = q_yaw * q_pitch * current_rotation
+            
+            return SetAgentPose(
+                agent_id=agent_id,
+                location=current_position,
+                rotation_quat=new_rotation.normalized()
+            )
         # elif action_type == "set_agent_pose":
         #     # Rotation delta is expected as [w, x, y, z]
         #     rotation_delta_list = action_json["rotation_delta"]
