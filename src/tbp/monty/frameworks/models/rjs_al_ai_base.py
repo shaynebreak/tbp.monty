@@ -44,7 +44,6 @@ class ALHTMBase(MontyForGraphMatching):
     def pre_episode(self, primary_target, semantic_id_to_label=None):
         super().pre_episode(primary_target, semantic_id_to_label)
         alhtm.onNewEpisode()
-        alhtm.report(str(self.motor_system.state))
 
     def step(self, observations, *args, **kwargs):
         self.report_observation(observations)
@@ -53,6 +52,9 @@ class ALHTMBase(MontyForGraphMatching):
 
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
+        # log to htm...
+        if(self.step_type_count == 0):
+            alhtm.report(str(self.motor_system.state))
 
         # pull requested sensor and data from observations...
         sensor_and_type = alhtm.getObservationRequest()
