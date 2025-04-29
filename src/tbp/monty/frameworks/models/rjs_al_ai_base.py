@@ -53,36 +53,9 @@ class ALHTMBase(MontyForGraphMatching):
     def report_observation(self, observations):
         """ extracts and sends to HTM the requested observation(s) from the full list of observations """
 
-        # update the agent start with position and rotation for the agent and all sensors...
-        agent_state["current_position"] = self.motor_system.state[self.motor_system.agent_id]["position"]
-        agent_state["current_rotation"] = self.motor_system.state[self.motor_system.agent_id]["rotation"]
-
-        # Add all sensors' positions and rotations dynamically
-        sensor_states = self.motor_system.state[self.motor_system.agent_id].get("sensors", {})
-        sensor_info = {}
-        
-        for sensor_id, sensor_data in sensor_states.items():
-            sensor_info[f"{sensor_id}_position"] = sensor_data.get("position", None)
-            sensor_info[f"{sensor_id}_rotation"] = sensor_data.get("rotation", None)
-
-        # Merge into agent_state
-        agent_state.update(sensor_info)
-
         # pull requested sensor and data from observations...
         sensor_and_type = alhtm.getObservationRequest()
         requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
-
-        # Grab the patch sensor's world_camera
-        world_camera = observations[self.motor_system.agent_id][sensor_and_type[0]].get("world_camera")
-        agent_state["world_camera"] = world_camera
-
-        # Pass it to the motor system (store as attribute for use in dynamic_call)
-        if world_camera is not None:
-            self.motor_system.world_camera = world_camera
-
-        # log to htm...
-        if(self.step_type_count == 0):
-            alhtm.report(str(agent_state))
 
         # get or create java safe array...
         rows = len(requested_observation)
