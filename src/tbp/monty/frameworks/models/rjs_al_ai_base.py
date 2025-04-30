@@ -62,7 +62,7 @@ class ALHTMBase(MontyForGraphMatching):
             if sensor_and_type[0] == "self" and sensor_and_type[1] == "orientation":
                 position = self.motor_system.state[self.motor_system.agent_id]["position"]
                 rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
-                requested_observation = [list(position) + rotation.w + rotation.x + rotation.y + rotation.z]
+                requested_observation = [list(position) + [rotation.w, rotation.x, rotation.y, rotation.z]]
             else:
                 requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
