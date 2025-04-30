@@ -24,10 +24,10 @@ import copy
 al_integration_test_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
 al_integration_test_experiment_args = copy.deepcopy(al_integration_test_experiment["experiment_args"])
 al_integration_test_experiment_args.update(
-        do_eval=False,
-        n_train_epochs=10,
-        max_train_steps=14000,
-        max_total_steps=14000,
+        do_eval=True,
+        n_eval_epochs=1,
+        max_eval_steps=14000,
+        max_eval_steps=14000,
 )
 al_integration_test_experiment.update(
     experiment_args=al_integration_test_experiment_args,
