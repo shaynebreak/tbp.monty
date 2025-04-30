@@ -219,9 +219,10 @@ class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
                 rotation_delta_list = action_json["rotation_delta"]
                 q_yaw = quaternion.from_rotation_vector(rotation_delta_list[1]*up)
                 q_pitch = quaternion.from_rotation_vector(rotation_delta_list[2]*right)
+                q_roll = quaternion.from_rotation_vector(rotation_delta_list[3]*forward)
 
                 # Apply delta rotation (delta + current)
-                new_rotation = (q_yaw * q_pitch * current_rotation).normalized()
+                new_rotation = (q_yaw * q_pitch * q_roll * current_rotation).normalized()
             else:
                 new_rotation = current_rotation
 
