@@ -22,13 +22,15 @@ import copy
 # Add your experiment configurations here
 # e.g.: my_experiment_config = dict(...)
 al_integration_test_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
-al_integration_test_experiment.update(
-    experiment_args=ExperimentArgs(
+al_integration_test_experiment_args = copy.deepcopy(al_integration_test_experiment.experiment_args)
+al_integration_test_experiment_args.update(
         do_eval=False,
         n_train_epochs=10,
         max_train_steps=14000,
         max_total_steps=14000,
-    ),
+)
+al_integration_test_experiment.update(
+    experiment_args=al_integration_test_experiment_args,
     monty_config=ALHTMMontyConfig(),
     eval_dataloader_class=ED.EnvironmentDataLoaderPerObject
 )
