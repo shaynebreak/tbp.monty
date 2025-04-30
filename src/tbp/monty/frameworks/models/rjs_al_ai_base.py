@@ -69,10 +69,11 @@ class ALHTMBase(MontyForGraphMatching):
             # get or create java safe array...
             rows = len(requested_observation)
             cols = len(requested_observation[0]) if rows > 0 else 0
-            self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], rows, cols, requested_observation)
+            depth = len(requested_observation[0][0]) if isinstance(requested_observation[0][0], list) else 1
+            self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], rows, cols*depth, requested_observation)
 
             # send off to AL HTM...
-            alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
+            alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols*depth)
 
         # log to htm...
         if(self.is_done):
