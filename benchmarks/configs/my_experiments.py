@@ -12,9 +12,6 @@ from dataclasses import asdict
 from benchmarks.configs.names import MyExperiments
 from benchmarks.configs.ycb_experiments import CONFIGS
 from tbp.monty.frameworks.config_utils.config_args import ALHTMMontyConfig
-from tbp.monty.frameworks.config_utils.make_dataset_configs import (
-    ExperimentArgs
-)
 from tbp.monty.frameworks.environments import embodied_data as ED
 from tbp.monty.frameworks.config_utils.policy_setup_utils import make_curv_surface_policy_config
 import copy
@@ -27,7 +24,7 @@ al_integration_test_experiment_args.update(
         do_eval=True,
         n_eval_epochs=1,
         max_eval_steps=14000,
-        max_eval_steps=14000,
+        max_total_steps=14000
 )
 al_integration_test_experiment.update(
     experiment_args=al_integration_test_experiment_args,
