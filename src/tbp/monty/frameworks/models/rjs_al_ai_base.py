@@ -57,16 +57,22 @@ class ALHTMBase(MontyForGraphMatching):
             alhtm.report(str(self.motor_system.state))
 
         # pull requested sensor and data from observations...
-        sensor_and_type = alhtm.getObservationRequest()
-        requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
+        observation_requests = alhtm.getObservationRequests()
+        for sensor_and_type in observation_requests:
+            if sensor_and_type[0] == "self" and sensor_and_type[1] == "orientation":
+                position = self.motor_system.state[self.motor_system.agent_id]["position"]
+                rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
+                requested_observation = [position + rotation]
+            else:
+                requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
-        # get or create java safe array...
-        rows = len(requested_observation)
-        cols = len(requested_observation[0]) if rows > 0 else 0
-        self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], rows, cols, requested_observation)
+            # get or create java safe array...
+            rows = len(requested_observation)
+            cols = len(requested_observation[0]) if rows > 0 else 0
+            self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], rows, cols, requested_observation)
 
-        # send off to AL HTM...
-        alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
+            # send off to AL HTM...
+            alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols)
 
         # log to htm...
         if(self.is_done):
