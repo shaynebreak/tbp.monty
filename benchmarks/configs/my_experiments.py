@@ -12,6 +12,9 @@ from dataclasses import asdict
 from benchmarks.configs.names import MyExperiments
 from benchmarks.configs.ycb_experiments import CONFIGS
 from tbp.monty.frameworks.config_utils.config_args import ALHTMMontyConfig
+from tbp.monty.frameworks.config_utils.make_dataset_configs import (
+    ExperimentArgs
+)
 from tbp.monty.frameworks.environments import embodied_data as ED
 from tbp.monty.frameworks.config_utils.policy_setup_utils import make_curv_surface_policy_config
 import copy
@@ -20,6 +23,12 @@ import copy
 # e.g.: my_experiment_config = dict(...)
 al_integration_test_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
 al_integration_test_experiment.update(
+    experiment_args=ExperimentArgs(
+        do_eval=False,
+        n_train_epochs=10,
+        max_train_steps=14000,
+        max_total_steps=14000,
+    ),
     monty_config=ALHTMMontyConfig(),
     eval_dataloader_class=ED.EnvironmentDataLoaderPerObject
 )
