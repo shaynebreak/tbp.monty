@@ -20,7 +20,7 @@ from tbp.monty.frameworks.actions.actions import (
 #    VectorXYZ,
 )
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM, GraphMemory
-from tbp.monty.frameworks.models.motor_policies import SurfacePolicyCurvatureInformed
+from tbp.monty.frameworks.models.motor_policies import InformedPolicy
 from tbp.monty.frameworks.models.goal_state_generation import GraphGoalStateGenerator
 import numpy as np
 import quaternion  # ensure this is imported
@@ -116,7 +116,7 @@ class ALHTMBase(MontyForGraphMatching):
     def check_if_any_lms_updated(self):
         return True # we always update our learning module because it's HTM...
 
-class ALHTMMotorSystem(SurfacePolicyCurvatureInformed):
+class ALHTMMotorSystem(InformedPolicy):
     """ AL HTM Motor System class - Interfaces with HTM system running externally to determine movement based on observations. """
     def __init__(self, *args, **kwargs):
         """Initialize and reset motor system."""
