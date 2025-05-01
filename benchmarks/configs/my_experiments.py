@@ -12,13 +12,15 @@ from dataclasses import asdict
 from benchmarks.configs.names import MyExperiments
 from benchmarks.configs.ycb_experiments import CONFIGS
 from tbp.monty.frameworks.config_utils.config_args import ALHTMMontyConfig
-from tbp.monty.frameworks.environments import embodied_data as ED
-from tbp.monty.frameworks.config_utils.policy_setup_utils import make_curv_surface_policy_config
+from tbp.monty.frameworks.config_utils.policy_setup_utils import make_informed_policy_config
+from tbp.monty.frameworks.actions.action_samplers import (
+    ConstantSampler
+)
 import copy
 
 # Add your experiment configurations here
 # e.g.: my_experiment_config = dict(...)
-al_integration_test_experiment = copy.deepcopy(CONFIGS["base_10simobj_surf_agent"])
+al_integration_test_experiment = copy.deepcopy(CONFIGS["base_config_10distinctobj_dist_agent"])
 al_integration_test_experiment_args = copy.deepcopy(al_integration_test_experiment["experiment_args"])
 al_integration_test_experiment_args.update(
         do_eval=True,
@@ -29,31 +31,24 @@ al_integration_test_experiment_args.update(
 al_integration_test_experiment.update(
     experiment_args=al_integration_test_experiment_args,
     monty_config=ALHTMMontyConfig(),
-    eval_dataloader_class=ED.EnvironmentDataLoaderPerObject
 )
 
 al_htm_center_view_experiment = copy.deepcopy(al_integration_test_experiment)
-al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args = make_curv_surface_policy_config(
-    desired_object_distance=0.025,
-    alpha=0.1,
-    pc_alpha=0.5,
-    max_pc_bias_steps=32,
-    min_general_steps=8,
-    min_heading_steps=12,
-    use_goal_state_driven_actions=True,
-    htm_config="center_view"  # override to center_view but I have to do all this other shit also somehow...
-)
+al_htm_center_view_experiment["monty_config"].motor_system_config.motor_system_args = make_informed_policy_config(
+            action_space_type="distant_agent_no_translation",
+            action_sampler_class=ConstantSampler,
+            rotation_degrees=5.0,
+            use_goal_state_driven_actions=True,
+            htm_config="center_view"  # override to center_view but I have to do all this other shit also somehow...
+        )
 al_htm_center_view_orbit_experiment = copy.deepcopy(al_integration_test_experiment)
-al_htm_center_view_orbit_experiment["monty_config"].motor_system_config.motor_system_args = make_curv_surface_policy_config(
-    desired_object_distance=0.025,
-    alpha=0.1,
-    pc_alpha=0.5,
-    max_pc_bias_steps=32,
-    min_general_steps=8,
-    min_heading_steps=12,
-    use_goal_state_driven_actions=True,
-    htm_config="center_view_orbit"  # override to center_view_orbit but I have to do all this other shit also somehow...
-)
+al_htm_center_view_orbit_experiment["monty_config"].motor_system_config.motor_system_args = make_informed_policy_config(
+            action_space_type="distant_agent_no_translation",
+            action_sampler_class=ConstantSampler,
+            rotation_degrees=5.0,
+            use_goal_state_driven_actions=True,
+            htm_config="center_view_orbit"  # override to center_view but I have to do all this other shit also somehow...
+        )
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
