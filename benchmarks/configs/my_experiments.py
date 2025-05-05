@@ -49,6 +49,14 @@ al_htm_center_view_orbit_experiment["monty_config"].motor_system_config.motor_sy
             use_goal_state_driven_actions=True,
             htm_config="center_view_orbit"  # override to center_view but I have to do all this other shit also somehow...
         )
+al_htm_obj_recognition_experiment = copy.deepcopy(al_integration_test_experiment)
+al_htm_obj_recognition_experiment["monty_config"].motor_system_config.motor_system_args = make_informed_policy_config(
+            action_space_type="distant_agent_no_translation",
+            action_sampler_class=ConstantSampler,
+            rotation_degrees=5.0,
+            use_goal_state_driven_actions=True,
+            htm_config="obj_recog"  # override to obj_recog but I have to do all this other shit also somehow...
+        )
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
@@ -56,6 +64,7 @@ experiments = MyExperiments(
     # e.g.: my_experiment=my_experiment_config
     al_integration_test_experiment=al_integration_test_experiment,
     al_htm_center_view_experiment=al_htm_center_view_experiment,
-    al_htm_center_view_orbit_experiment=al_htm_center_view_orbit_experiment
+    al_htm_center_view_orbit_experiment=al_htm_center_view_orbit_experiment,
+    al_htm_obj_recognition_experiment=al_htm_obj_recognition_experiment
 )
 CONFIGS = asdict(experiments)

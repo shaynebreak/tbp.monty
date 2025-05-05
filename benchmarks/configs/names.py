@@ -105,6 +105,7 @@ class MyExperiments:
     al_integration_test_experiment: dict
     al_htm_center_view_experiment: dict
     al_htm_center_view_orbit_experiment: dict
+    al_htm_obj_recognition_experiment: dict
 
 
 NAMES.extend(field.name for field in fields(MyExperiments))
