@@ -43,7 +43,10 @@ class ALHTMBase(MontyForGraphMatching):
 
     def pre_episode(self, primary_target, semantic_id_to_label=None):
         super().pre_episode(primary_target, semantic_id_to_label)
-        alhtm.onNewEpisode()
+        if self.experiment_mode == "train":
+            alhtm.onNewEpisode(primary_target["object"])
+        else:
+            alhtm.onNewEpisode()
 
     def step(self, observations, *args, **kwargs):
         self.report_observation(observations)
