@@ -43,7 +43,7 @@ class ALHTMBase(MontyForGraphMatching):
 
     def pre_episode(self, primary_target, semantic_id_to_label=None):
         super().pre_episode(primary_target, semantic_id_to_label)
-        if self.epochs == 0:
+        if (self.episodes % 10) == 0:
             alhtm.onNewEpisode(primary_target["object"])
         else:
             alhtm.onNewEpisode()
