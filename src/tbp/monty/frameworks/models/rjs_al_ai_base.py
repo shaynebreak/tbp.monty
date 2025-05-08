@@ -79,6 +79,9 @@ class ALHTMBase(MontyForGraphMatching):
             # send off to AL HTM...
             alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], rows, cols*depth)
 
+        # notify observations sent...
+        alhtm.onObservationsComplete()
+
         # log to htm...
         if(self.is_done):
             alhtm.report(str(self.motor_system.state))
