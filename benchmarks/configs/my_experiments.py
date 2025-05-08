@@ -24,7 +24,7 @@ al_integration_test_experiment = copy.deepcopy(CONFIGS["base_config_10distinctob
 al_integration_test_experiment_args = copy.deepcopy(al_integration_test_experiment["experiment_args"])
 al_integration_test_experiment_args.update(
         do_eval=True,
-        n_eval_epochs=1,
+        n_eval_epochs=2,
         max_eval_steps=14000,
         max_total_steps=14000
 )
@@ -50,16 +50,6 @@ al_htm_center_view_orbit_experiment["monty_config"].motor_system_config.motor_sy
             htm_config="center_view_orbit"  # override to center_view but I have to do all this other shit also somehow...
         )
 al_htm_obj_recognition_experiment = copy.deepcopy(al_integration_test_experiment)
-al_htm_obj_recognition_experiment_args = copy.deepcopy(al_integration_test_experiment_args)
-al_htm_obj_recognition_experiment_args.update(
-        do_eval=False,
-        do_train=True,
-        show_sensor_output=True,
-        max_eval_steps=500,
-        max_train_steps=4000,
-        n_train_epochs=1,
-        n_eval_epochs=1
-)
 al_htm_obj_recognition_experiment["monty_config"].motor_system_config.motor_system_args = make_informed_policy_config(
             action_space_type="distant_agent_no_translation",
             action_sampler_class=ConstantSampler,
@@ -67,9 +57,6 @@ al_htm_obj_recognition_experiment["monty_config"].motor_system_config.motor_syst
             use_goal_state_driven_actions=True,
             htm_config="obj_recog"  # override to obj_recog but I have to do all this other shit also somehow...
         )
-al_htm_obj_recognition_experiment.update(
-    experiment_args=al_htm_obj_recognition_experiment_args
-)
 
 experiments = MyExperiments(
     # For each experiment name in MyExperiments, add its corresponding
