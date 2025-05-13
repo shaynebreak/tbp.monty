@@ -49,8 +49,8 @@ class ALHTMBase(MontyForGraphMatching):
             alhtm.onNewEpisode()
 
     def step(self, observations, *args, **kwargs):
+        super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
         self.report_observation(observations)
-        # super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
         self._set_step_type_and_check_if_done()
         self._post_step()
 
