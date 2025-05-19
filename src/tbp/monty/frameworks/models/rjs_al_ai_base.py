@@ -47,7 +47,6 @@ class ALHTMBase(MontyForGraphMatching):
             alhtm.onNewEpisode(primary_target["object"])
         else:
             alhtm.onNewEpisode()
-            self.is_done # trigger property update???
 
     def step(self, observations, *args, **kwargs):
         # super(MontyForGraphMatching, self).step(observations, *args, **kwargs)
