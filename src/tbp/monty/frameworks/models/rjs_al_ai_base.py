@@ -60,6 +60,10 @@ class ALHTMBase(MontyForGraphMatching):
         if(self.step_type_count == 0):
             alhtm.report(str(self.motor_system.state))
 
+        # capture Monty observation data...
+        self.aggregate_sensory_inputs(observations)
+        # TODO: figure out how to send the aggregated inputs!!!!11111
+
         # pull requested sensor and data from observations...
         observation_requests = alhtm.getObservationRequests()
         for sensor_and_type in observation_requests:
