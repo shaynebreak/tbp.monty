@@ -71,6 +71,10 @@ class ALHTMBase(MontyForGraphMatching):
                 position = self.motor_system.state[self.motor_system.agent_id]["position"]
                 rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
                 requested_observation = [list(position) + [rotation.w, rotation.x, rotation.y, rotation.z]]
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "morphological_features":
+                requested_observation = self.sensor_module_outputs
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "non_morphological_features":
+                requested_observation = self.sensor_module_outputs
             else:
                 requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
