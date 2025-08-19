@@ -80,13 +80,13 @@ class ALHTMBase(MontyForGraphMatching):
                                           self.sensor_module_outputs[0].non_morphological_features["mean_depth"]]]
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "hsv":
-                requested_observation = self.sensor_module_outputs[0].non_morphological_features["hsv"]
+                requested_observation = [self.sensor_module_outputs[0].non_morphological_features["hsv"]]
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures":
-                requested_observation = self.sensor_module_outputs[0].non_morphological_features["principal_curvatures"]
+                requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures"]]
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures_log":
-                requested_observation = self.sensor_module_outputs[0].non_morphological_features["principal_curvatures_log"]
+                requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures_log"]]
 
             else:
                 requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
