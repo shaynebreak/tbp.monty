@@ -71,17 +71,23 @@ class ALHTMBase(MontyForGraphMatching):
                 position = self.motor_system.state[self.motor_system.agent_id]["position"]
                 rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
                 requested_observation = [list(position) + [rotation.w, rotation.x, rotation.y, rotation.z]]
-            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "morphological_features":
+
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "pose_vectors":
                 requested_observation = self.sensor_module_outputs[0].morphological_features["pose_vectors"]
-            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "non_morphological_features":
-                nmf = self.sensor_module_outputs[0].non_morphological_features
-                requested_observation = [[
-                        nmf["min_depth"],
-                        nmf["mean_depth"],
-                        *nmf["hsv"].tolist(),                  # 3 values
-                        *nmf["principal_curvatures"].tolist(), # 2 values
-                        *nmf["principal_curvatures_log"].tolist() # 2 values
-                    ]]
+
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "min_mean_depth":
+                requested_observation = [[self.sensor_module_outputs[0].non_morphological_features["min_depth"],
+                                          self.sensor_module_outputs[0].non_morphological_features["mean_depth"]]]
+
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "hsv":
+                requested_observation = self.sensor_module_outputs[0].non_morphological_features["hsv"]
+
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures":
+                requested_observation = self.sensor_module_outputs[0].non_morphological_features["principal_curvatures"]
+
+            elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures_log":
+                requested_observation = self.sensor_module_outputs[0].non_morphological_features["principal_curvatures_log"]
+
             else:
                 requested_observation = observations[self.motor_system.agent_id][sensor_and_type[0]][sensor_and_type[1]].tolist()
 
