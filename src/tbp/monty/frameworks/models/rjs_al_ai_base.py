@@ -75,32 +75,32 @@ class ALHTMBase(MontyForGraphMatching):
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "pose_vectors":
                 if "pose_vectors" in self.sensor_module_outputs[0].morphological_features:
                     requested_observation = self.sensor_module_outputs[0].morphological_features["pose_vectors"]
-                else
+                else:
                     alhtm.report("pose_vectors not available in morphological features.")
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "min_mean_depth":
                 if "min_depth" in self.sensor_module_outputs[0].non_morphological_features and "mean_depth" in self.sensor_module_outputs[0].non_morphological_features:
                     requested_observation = [[self.sensor_module_outputs[0].non_morphological_features["min_depth"],
                                               self.sensor_module_outputs[0].non_morphological_features["mean_depth"]]]
-                else
+                else:
                     alhtm.report("min_depth or mean_depth not available in non morphological features.")
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "hsv":
                 if "hsv" in self.sensor_module_outputs[0].non_morphological_features:
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["hsv"]]
-                else
+                else:
                     alhtm.report("hsv not available in non morphological features.")
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures":
                 if "principal_curvatures" in self.sensor_module_outputs[0].non_morphological_features:
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures"]]
-                else
+                else:
                     alhtm.report("principal_curvatures not available in non morphological features.")
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "principal_curvatures_log":
                 if "principal_curvatures_log" in self.sensor_module_outputs[0].non_morphological_features:
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures_log"]]
-                else
+                else:
                     alhtm.report("principal_curvatures_log not available in non morphological features.")
 
             else:
