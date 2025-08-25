@@ -77,7 +77,7 @@ class ALHTMBase(MontyForGraphMatching):
                     requested_observation = self.sensor_module_outputs[0].morphological_features["pose_vectors"]
                 else:
                     alhtm.report("pose_vectors not available in morphological features.")
-                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 3, 3, [[]])
+                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 3, 3, requested_observation)
                     # send off to AL HTM...
                     alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], 3, 3)
 
@@ -87,7 +87,7 @@ class ALHTMBase(MontyForGraphMatching):
                                               self.sensor_module_outputs[0].non_morphological_features["mean_depth"]]]
                 else:
                     alhtm.report("min_depth or mean_depth not available in non morphological features.")
-                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, [[]])
+                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, requested_observation)
                     # send off to AL HTM...
                     alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], 1, 2)
 
@@ -96,7 +96,7 @@ class ALHTMBase(MontyForGraphMatching):
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["hsv"]]
                 else:
                     alhtm.report("hsv not available in non morphological features.")
-                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 3, [[]])
+                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 3, requested_observation)
                     # send off to AL HTM...
                     alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], 1, 3)
 
@@ -105,7 +105,7 @@ class ALHTMBase(MontyForGraphMatching):
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures"]]
                 else:
                     alhtm.report("principal_curvatures not available in non morphological features.")
-                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, [[]])
+                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, requested_observation)
                     # send off to AL HTM...
                     alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], 1, 2)
 
@@ -114,7 +114,7 @@ class ALHTMBase(MontyForGraphMatching):
                     requested_observation = [self.sensor_module_outputs[0].non_morphological_features["principal_curvatures_log"]]
                 else:
                     alhtm.report("principal_curvatures_log not available in non morphological features.")
-                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, [[]])
+                    self.save_raw_memmap(sensor_and_type[0], sensor_and_type[1], 1, 2, requested_observation)
                     # send off to AL HTM...
                     alhtm.setObservation(sensor_and_type[0], sensor_and_type[1], 1, 2)
 
@@ -141,7 +141,10 @@ class ALHTMBase(MontyForGraphMatching):
     def save_raw_memmap(self, sensor_id, sensor_type, rows, cols, observation_array):
         # Ensure float64 format (double)
         dtype = np.float64
-        flat_array = np.array(observation_array, dtype=dtype).flatten()
+        if observation_array is None:
+            flat_array = np.empty((0,), dtype=dtype)
+        else:
+            flat_array = np.array(observation_array, dtype=dtype).flatten()
 
         # lookup or cache the memory mapped file...
         key = (sensor_id, sensor_type)
