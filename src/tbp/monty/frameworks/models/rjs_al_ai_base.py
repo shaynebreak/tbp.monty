@@ -143,7 +143,7 @@ class ALHTMBase(MontyForGraphMatching):
         # Ensure float64 format (double)
         dtype = np.float64
         if observation_array is None:
-            flat_array = np.empty((cols,), dtype=dtype)
+            flat_array = np.empty((rows*cols,), dtype=dtype)
         else:
             flat_array = np.array(observation_array, dtype=dtype).flatten()
 
