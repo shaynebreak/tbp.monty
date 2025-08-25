@@ -3,6 +3,8 @@ import os
 
 from py4j.java_gateway import JavaGateway, GatewayParameters
 
+import numpy as np
+import quaternion  # ensure this is imported
 from tbp.monty.frameworks.actions.actions import (
     Action,
 #    ActionJSONDecoder,
@@ -19,11 +21,10 @@ from tbp.monty.frameworks.actions.actions import (
 #    TurnRight,
 #    VectorXYZ,
 )
+from tbp.monty.frameworks.models.goal_state_generation import GraphGoalStateGenerator
 from tbp.monty.frameworks.models.graph_matching import MontyForGraphMatching, GraphLM, GraphMemory
 from tbp.monty.frameworks.models.motor_policies import InformedPolicy
-from tbp.monty.frameworks.models.goal_state_generation import GraphGoalStateGenerator
-import numpy as np
-import quaternion  # ensure this is imported
+
 
 gateway = JavaGateway(gateway_parameters=GatewayParameters(address='172.17.96.1', port=25333))
 # alhtm = gateway.entry_point.getAlHtm("demo")
@@ -142,7 +143,7 @@ class ALHTMBase(MontyForGraphMatching):
         # Ensure float64 format (double)
         dtype = np.float64
         if observation_array is None:
-            flat_array = np.empty((2,), dtype=dtype)
+            flat_array = np.empty((cols, rows), dtype=dtype)
         else:
             flat_array = np.array(observation_array, dtype=dtype).flatten()
 
