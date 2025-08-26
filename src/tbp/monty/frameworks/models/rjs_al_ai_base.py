@@ -67,10 +67,18 @@ class ALHTMBase(MontyForGraphMatching):
         observation_requests = alhtm.getObservationRequests()
         for sensor_and_type in observation_requests:
             requested_observation = None
-            if sensor_and_type[0] == "self" and sensor_and_type[1] == "orientation":
+            if sensor_and_type[0] == "self" and sensor_and_type[1] == "orientation": # deprecated way of retrieving position and rotation in a single buffer...
                 position = self.motor_system.state[self.motor_system.agent_id]["position"]
                 rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
                 requested_observation = [list(position) + [rotation.w, rotation.x, rotation.y, rotation.z]]
+
+            elif sensor_and_type[0] == "self" and sensor_and_type[1] == "position":
+                position = self.motor_system.state[self.motor_system.agent_id]["position"]
+                requested_observation = [list(position)]
+
+            elif sensor_and_type[0] == "self" and sensor_and_type[1] == "rotation":
+                rotation = self.motor_system.state[self.motor_system.agent_id]["rotation"]
+                requested_observation = [[rotation.w, rotation.x, rotation.y, rotation.z]]
 
             elif sensor_and_type[0] == "patch" and sensor_and_type[1] == "pose_vectors":
                 if "pose_vectors" in self.sensor_module_outputs[0].morphological_features:
